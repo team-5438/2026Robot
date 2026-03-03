@@ -31,8 +31,8 @@ public final class Constants {
   {
     public static final boolean DRIVEWITHVISION = true;
   }
-  public static final PIDController anglePID = new PIDController(10, 0, 0.1);
-  public static final double HUB_X = 4.62534; //x of hub in meters  
+  public static final PIDController anglePID = new PIDController(10, 0, 0.1); 
+  public static final double HUB_X = isRedAlliance ? 4.62534 : 11.91539; //x of hub in meters
   public static final double HUB_Y = 4.034536; //y of hub in meters
   public static final Controller Operator = new Controller(
     /* NOTE: this is a PS5 Controller */
@@ -50,11 +50,12 @@ public final class Constants {
   public static final double MAX_SPEED  = 4.5; //in meters/sec
 
   public static final class Robot {
-    /* this boolean is used to determine if we should flip the path in path planner */
+    /* this boolean is used to determine if we should flip the path in path planner, among other things */
     public static final boolean isRedAlliance = GetAlliance.isRed();
   }
 
   public static final class Intake {
+    /* -----TODO: Add actual IDs----- */
     public static final int intakeDeployID = 1; //NOT REAL ID
     public static final int intakeSpinnyID = 2; //NOT REAL ID
     public static final int deployEncoderID = 0; //NOT REAL ID
@@ -63,6 +64,7 @@ public final class Constants {
   }
 
   public static final class Shooting {
+    /* ----TODO: Add actual IDs----- */
     public static final int shootWheelsID = 4; //NOT REAL ID
     public static final int feedWheelsID = 3; //NOT REAL ID
     public static final int hoodAngleMotorID = 6; //NOT REAL ID
@@ -70,7 +72,7 @@ public final class Constants {
   }
 
   public static final class QuestNav {
-    //ADD ACTUAL VALUES FOR INITIAL POSE
+    //TODO: ADD ACTUAL VALUES FOR INITIAL POSE
     public static final Pose3d robotPose = isRedAlliance ? new Pose3d(0,0,0, null) : new Pose3d(0,0,0, null);
     public static final Matrix<N3, N1> QUESTNAV_STD_DEVS =
       VecBuilder.fill(

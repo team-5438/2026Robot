@@ -4,9 +4,10 @@
 
 package frc.robot;
 
-import frc.robot.commands.DeployIntakeCommand;
+import frc.robot.commands.SetIntakeCommand;
+import frc.robot.commands.FeedCommand;
 import frc.robot.commands.IntakeWheelsCommand;
-import frc.robot.commands.ShootCommand;
+import frc.robot.commands.ShootingWheelsCommand;
 import frc.robot.commands.SpencerAutoAim;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.QuestNavSubsystem;
@@ -107,10 +108,17 @@ public class RobotContainer {
     driver.y().onTrue(new InstantCommand(swerveSubsystem::zeroGyro));
 
     /* -------OPERATOR CONTROLS--------- */
-    operator.R2().whileTrue(new ShootCommand(shootingSubsystem, spencerAutoAim)); //SHOOT WHILETRUE
-    operator.L2().whileTrue(new IntakeWheelsCommand(intakeSubsystem, 1)); //INTAKE WHILETRUE
-    operator.square().onTrue(new DeployIntakeCommand(intakeSubsystem, 0.5)); //NOT ACTUAL VALUE (deploy intake)
-    operator.circle().onTrue(new DeployIntakeCommand(intakeSubsystem, 0)); //NOT ACTUAL VALUE (withdraw intake)
+    operator.R2().whileTrue(new FeedCommand(shootingSubsystem, 0.5)); // Feed
+    operator.options().whileTrue(new FeedCommand(shootingSubsystem, -0.5)); // Reverse Feed (hopefully never used)
+    
+    operator.R1().whileTrue(new ShootingWheelsCommand(shootingSubsystem, spencerAutoAim)); // Spin up to shoot balls
+
+    operator.L2().whileTrue(new IntakeWheelsCommand(intakeSubsystem, 1)); // Intake balls
+    operator.L1().whileTrue(new IntakeWheelsCommand(intakeSubsystem, -0.5)); // Outtake (hopefully never used)
+    
+    operator.square().onTrue(new SetIntakeCommand(intakeSubsystem, 0.5)); //NOT ACTUAL VALUE (deploy intake)
+    operator.circle().onTrue(new SetIntakeCommand(intakeSubsystem, 0)); //NOT ACTUAL VALUE (withdraw intake)
+
   }
 
   /**

@@ -4,43 +4,43 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.ShootingSubsystem;
-import frc.robot.Robot;
+import frc.robot.Constants;
+import frc.robot.subsystems.IntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ShootCommand extends Command {
-  ShootingSubsystem shootingSubsystem;
-  SpencerAutoAim spencerAutoAim;
-  
-  /** Creates a new ShootCommand. */
-  public ShootCommand(ShootingSubsystem shootingSubsystem, SpencerAutoAim spencerAutoAim) {
-    this.shootingSubsystem = shootingSubsystem;
-    this.spencerAutoAim = spencerAutoAim;
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(shootingSubsystem);
+public class SetIntakeCommand extends Command {
+  IntakeSubsystem intakeSubsystem;
+  PIDController intakePID;
+  double angleMeasurement;
+  /** Creates a new IntakeCommand. */
+  public SetIntakeCommand(IntakeSubsystem intakeSubsystem, double angleMeasurement) {
+    this.intakeSubsystem = intakeSubsystem;
+    intakePID = Constants.Intake.intakeDeployPID;
+    this.angleMeasurement = angleMeasurement;
+
+    addRequirements(intakeSubsystem);
   }
+
+
+  /* --------NOTE: WE MIGHT NEED A FEED FORWARD ON INTAKE---------- */
+
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    shootingSubsystem.shootWheels.set(0.9); //NOT TESTED SPEED
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
+    intakeSubsystem.intakeDeploy.set(intakePID.calculate(intakeSubsystem.deployEncoder.get(), angleMeasurement)); //NOT REAL MEASUREMENT YET
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if(spencerAutoAim.autoAimOn){
-      shootingSubsystem.shootWheels.set(0.1); //NOT TESTED SPEED
-    } else {
-      shootingSubsystem.shootWheels.set(0);
-    }
+    intakeSubsystem.intakeDeploy.set(0);
   }
 
   // Returns true when the command should end.
