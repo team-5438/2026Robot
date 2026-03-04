@@ -8,6 +8,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -32,19 +33,22 @@ public final class Constants {
     public static final boolean DRIVEWITHVISION = true;
   }
   public static final PIDController anglePID = new PIDController(10, 0, 0.1); 
-  public static final double HUB_X = isRedAlliance ? 4.62534 : 11.91539; //x of hub in meters
+  public static final double HUB_X = isRedAlliance ? 11.91539 : 4.6253; //x of hub in meters
   public static final double HUB_Y = 4.034536; //y of hub in meters
-  public static final Controller Operator = new Controller(
+
+  public static final Controller Operator = new Controller( 
     /* NOTE: this is a PS5 Controller */
     1, /* id */
     new StickDeadband(0.1, 0.1), /* left stick deadband */
-    new StickDeadband(0.15, 0.15)); /* right stick deadband+ */
+    new StickDeadband(0.1, 0.1)); /* right stick deadband+ */
 
   public static final Controller Driver = new Controller(
+    //IMPORTANT: ACTUAL DEADBAND IS IN ROBOTCONTAINER. IN FUTURE, DON'T USE THIS CLASS FOR DRIVER
+
     /* NOTE: this is a Xbox Controller */
     0, /* id */
-    new StickDeadband(0.15          , 0.15), /* left stick deadband */
-    new StickDeadband(0.15, 0.15)); /* right stick deadband */
+    new StickDeadband(0.1, 0.1), /* left stick deadband */
+    new StickDeadband(0.1, 0.1)); /* right stick deadband */
 
   //public static final Rotation3d gyroOffset = new Rotation3d(0,0,90);
   public static final double MAX_SPEED  = 4.5; //in meters/sec
@@ -73,7 +77,7 @@ public final class Constants {
 
   public static final class QuestNav {
     //TODO: ADD ACTUAL VALUES FOR INITIAL POSE
-    public static final Pose3d robotPose = isRedAlliance ? new Pose3d(0,0,0, null) : new Pose3d(0,0,0, null);
+    public static final Pose3d robotPose = isRedAlliance ? new Pose3d(0,0,0, new Rotation3d()) : new Pose3d(0,0,0, new Rotation3d());
     public static final Matrix<N3, N1> QUESTNAV_STD_DEVS =
       VecBuilder.fill(
         0.02, // Trust down to 2cm in X direction

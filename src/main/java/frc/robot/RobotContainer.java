@@ -16,6 +16,7 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 import gg.questnav.questnav.QuestNav;
 import swervelib.SwerveDrive;
+import swervelib.SwerveInputStream;
 
 import java.io.File;
 import java.util.function.DoubleSupplier;
@@ -26,6 +27,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -56,6 +58,16 @@ public class RobotContainer {
   public SpencerAutoAim spencerAutoAim;
 
   private final SendableChooser<Command> autoChooser;
+
+  SwerveInputStream driveAngularVelocity = SwerveInputStream.of(swerveSubsystem.getSwerveDrive(),
+                                                                () -> -driver.getLeftY(),
+                                                                () -> -driver.getLeftX())
+                                                            .withControllerRotationAxis( () -> -driver.getRightX())
+                                                            .deadband(0.1)
+                                                            .scaleTranslation(1.0)
+                                                            .scaleRotation(1)
+                                                            .allianceRelativeControl(true)
+                                                            .robotRelative(false);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -102,9 +114,10 @@ public class RobotContainer {
 
     driver.x().toggleOnTrue(spencerAutoAim);
 
-    Command driverControls = swerveSubsystem.driveCommand(translationX, translationY, angularRotationX);
-    swerveSubsystem.setDefaultCommand(driverControls);
+    
+    swerveSubsystem.setDefaultCommand(swerveSubsystem.driveFieldOriented(driveAngularVelocity));
 
+    
     driver.y().onTrue(new InstantCommand(swerveSubsystem::zeroGyro));
 
     /* -------OPERATOR CONTROLS--------- */

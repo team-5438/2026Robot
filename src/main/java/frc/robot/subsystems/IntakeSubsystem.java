@@ -33,7 +33,7 @@ public class IntakeSubsystem extends SubsystemBase {
     deployEncoder = new DutyCycleEncoder(Constants.Intake.deployEncoderID);
 
     tab = Shuffleboard.getTab("Intake Subsystem");
-    deployEncoderEntry = tab.add("deployEncoder", 0.0).getEntry();
+    deployEncoderEntry = tab.add("Deploy Encoder", 0.0).getEntry();
   }
 
   @Override
