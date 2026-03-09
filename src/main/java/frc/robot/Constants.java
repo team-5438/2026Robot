@@ -32,7 +32,7 @@ public final class Constants {
   {
     public static final boolean DRIVEWITHVISION = true;
   }
-  public static final PIDController anglePID = new PIDController(10, 0, 0.1); 
+  public static final PIDController anglePID = new PIDController(2, 0, 0.05);
   public static final double HUB_X = isRedAlliance ? 11.91539 : 4.6253; //x of hub in meters
   public static final double HUB_Y = 4.034536; //y of hub in meters
 

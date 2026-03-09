@@ -25,10 +25,13 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -69,6 +72,16 @@ public class RobotContainer {
                                                             .allianceRelativeControl(true)
                                                             .robotRelative(false);
 
+  SwerveInputStream driveAngularvelocitySlow = SwerveInputStream.of(swerveSubsystem.getSwerveDrive(),
+                                                                () -> -driver.getLeftY(),
+                                                                () -> -driver.getLeftX())
+                                                            .withControllerRotationAxis( () -> -driver.getRightX())
+                                                            .deadband(0.1)
+                                                            .scaleTranslation(0.4)
+                                                            .scaleRotation(0.4)
+                                                            .allianceRelativeControl(true)
+                                                            .robotRelative(false);
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     configureBindings();
@@ -100,23 +113,26 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    DoubleSupplier speedMod = () -> driver.getRawAxis(XboxController.Axis.kRightTrigger.value) == 1 ? 2.5 : 1;
-    /* NOTE: the division is used to reduce the speed of the robot when the left trigger is held */
-    DoubleSupplier translationX = () -> -MathUtil.applyDeadband(driver.getLeftY(), Constants.Driver.leftStick.Y) / speedMod.getAsDouble();
-    DoubleSupplier translationY = () -> -MathUtil.applyDeadband(driver.getLeftX(), Constants.Driver.leftStick.X) / speedMod.getAsDouble();
+    // BELOW IS NOT USED ANYMORE
+    DoubleSupplier speedMod = () -> driver.getRawAxis(XboxController.Axis.kRightTrigger.value) == 1 ? 0.4 : 1;
+    // /* NOTE: the division is used to reduce the speed of the robot when the left trigger is held */
+    // DoubleSupplier translationX = () -> -MathUtil.applyDeadband(driver.getLeftY(), Constants.Driver.leftStick.Y) / speedMod.getAsDouble();
+    // DoubleSupplier translationY = () -> -MathUtil.applyDeadband(driver.getLeftX(), Constants.Driver.leftStick.X) / speedMod.getAsDouble();
 
-    /* rotation controls for the robot */
-    DoubleSupplier angularRotationX = () -> -MathUtil.applyDeadband(driver.getRawAxis(4), Constants.Driver.rightStick.X) / speedMod.getAsDouble();
+    // /* rotation controls for the robot */
+    // DoubleSupplier angularRotationX = () -> -MathUtil.applyDeadband(driver.getRawAxis(4), Constants.Driver.rightStick.X) / speedMod.getAsDouble();
     
-    spencerAutoAim = new SpencerAutoAim(driver, swerveSubsystem, shootingSubsystem);
-    
+    ShuffleboardTab autoAimShuffleboardTab = Shuffleboard.getTab("AutoAim");
+    GenericEntry autoAimEntry = autoAimShuffleboardTab.add("Is it On?", false).getEntry();    
+    spencerAutoAim = new SpencerAutoAim(driver, swerveSubsystem, shootingSubsystem, autoAimEntry);
+
     /* ----------DRIVER CONTROLS----------- */
 
     driver.x().toggleOnTrue(spencerAutoAim);
 
-    
     swerveSubsystem.setDefaultCommand(swerveSubsystem.driveFieldOriented(driveAngularVelocity));
-
+    driver.rightTrigger().onTrue(Commands.runOnce(() -> driveAngularVelocity.scaleRotation(0.4).scaleTranslation(0.4)))
+                          .onFalse(Commands.runOnce(() -> driveAngularVelocity.scaleRotation(1).scaleTranslation(1)));
     
     driver.y().onTrue(new InstantCommand(swerveSubsystem::zeroGyro));
 
