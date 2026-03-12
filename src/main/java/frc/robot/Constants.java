@@ -76,8 +76,7 @@ public final class Constants {
   }
 
   public static final class QuestNav {
-    //TODO: ADD ACTUAL VALUES FOR INITIAL POSE
-    public static final Pose3d robotPose = isRedAlliance ? new Pose3d(0,0,0, new Rotation3d()) : new Pose3d(0,0,0, new Rotation3d());
+    //public static final Pose3d robotPose = isRedAlliance ? new Pose3d(0,0,0, new Rotation3d()) : new Pose3d(0,0,0, new Rotation3d());
     public static final Matrix<N3, N1> QUESTNAV_STD_DEVS =
       VecBuilder.fill(
         0.02, // Trust down to 2cm in X direction

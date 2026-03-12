@@ -20,6 +20,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 import frc.robot.subsystems.ShootingSubsystem;
@@ -68,7 +69,7 @@ public class SpencerAutoAim extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double speedMod = driver.getRawAxis(XboxController.Axis.kRightTrigger.value) == 1 ? 0.4 : 1;
+    double speedMod = driver.getRawAxis(XboxController.Axis.kRightTrigger.value) == 1 ? 0.8 : 1;
 
     robotPose2d = swerveSubsystem.getPose();
     robotX = robotPose2d.getMeasureX().in(Meters);
@@ -79,8 +80,8 @@ public class SpencerAutoAim extends Command {
     currentAngle = robotPose2d.getRotation().getDegrees();
     diffAngle = currentAngle - desiredAngle;
 
-    swerveSubsystem.driveFieldOriented(getTargetSpeeds(driver.getLeftY() / speedMod,
-                          driver.getLeftX() / speedMod,
+    swerveSubsystem.driveFieldOriented(getTargetSpeeds(driver.getLeftY() * speedMod,
+                          driver.getLeftX()  * speedMod,
                           Rotation2d.fromDegrees(desiredAngle)));
     System.out.println("P: " + swerveSubsystem.swerveDrive.swerveController.thetaController.getP());
     System.out.println("I: " + swerveSubsystem.swerveDrive.swerveController.thetaController.getI());

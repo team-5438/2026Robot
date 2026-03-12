@@ -56,8 +56,7 @@ public class Vision
   /**
    * April Tag Field Layout of the year.
    */
-  public static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(
-     AprilTagFields.k2025ReefscapeWelded);
+  public static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
     
 
   /**
@@ -358,7 +357,7 @@ public class Vision
   /**
    * Camera   to select each camera
    */
-  enum Cameras
+  public enum Cameras
   {
     /*
      * Back Right Camera
@@ -432,7 +431,7 @@ public class Vision
     /**
      * Estimated robot pose.
      */
-    public        Optional<EstimatedRobotPose> estimatedRobotPose;
+    public        Optional<EstimatedRobotPose> estimatedRobotPose = Optional.empty();
     /**
      * Simulated camera instance which only exists during simulations.
      */

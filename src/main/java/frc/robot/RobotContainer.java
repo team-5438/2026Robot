@@ -25,6 +25,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -38,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -54,14 +57,16 @@ public class RobotContainer {
   public SwerveDrive swerveDrive;
   public SwerveSubsystem swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
   public ShootingSubsystem shootingSubsystem = new ShootingSubsystem();
-  public QuestNavSubsystem questNavSubsystem = new QuestNavSubsystem(swerveSubsystem);
+  public QuestNavSubsystem questNavSubsystem;
   public IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   public final CommandXboxController driver = new CommandXboxController(Constants.Driver.id);
   public final CommandPS5Controller operator = new CommandPS5Controller(Constants.Operator.id);
   public SpencerAutoAim spencerAutoAim;
 
   private final SendableChooser<Command> autoChooser;
+  public final SendableChooser<Chooser> initialChooser;
 
+  
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(swerveSubsystem.getSwerveDrive(),
                                                                 () -> -driver.getLeftY(),
                                                                 () -> -driver.getLeftX())
@@ -101,6 +106,10 @@ public class RobotContainer {
     
     //Put the autoChooser on the SmartDashboard
     SmartDashboard.putData("Auto Chooser", autoChooser);
+
+    initialChooser = setUpInitialChooser();
+    vision = new Vision(swerveSubsystem::getPose, swerveSubsystem.swerveDrive.field);
+    questNavSubsystem = new QuestNavSubsystem(swerveSubsystem, vision, initialChooser);
   }
 
   /**
@@ -114,7 +123,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // BELOW IS NOT USED ANYMORE
-    DoubleSupplier speedMod = () -> driver.getRawAxis(XboxController.Axis.kRightTrigger.value) == 1 ? 0.4 : 1;
+    // DoubleSupplier speedMod = () -> driver.getRawAxis(XboxController.Axis.kRightTrigger.value) == 1 ? 0.4 : 1;
     // /* NOTE: the division is used to reduce the speed of the robot when the left trigger is held */
     // DoubleSupplier translationX = () -> -MathUtil.applyDeadband(driver.getLeftY(), Constants.Driver.leftStick.Y) / speedMod.getAsDouble();
     // DoubleSupplier translationY = () -> -MathUtil.applyDeadband(driver.getLeftX(), Constants.Driver.leftStick.X) / speedMod.getAsDouble();
@@ -158,5 +167,42 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     return autoChooser.getSelected();
+  }
+
+  public enum Chooser {
+    REDLEFT(new Pose2d(12.929, 0.419, new Rotation2d(Math.PI))),
+    REDRIGHT(new Pose2d(12.929, 7.641,new Rotation2d(Math.PI))),
+    BLUELEFT(new Pose2d(3.661, 7.641, new Rotation2d(Math.PI))),
+    BLUERIGHT(new Pose2d(3.661, 0.419, new Rotation2d(Math.PI))),
+    CAMERAS(null);
+
+    private Pose2d initialPose;
+
+    private Chooser(Pose2d initialPose){
+      this.initialPose = initialPose;
+    }
+
+    public Pose2d getInitialPose(Vision vision){
+      //might check cameras before cameras actually start (---------IMPORTANT---------)
+      if(initialPose == null){
+        try{
+          return vision.getEstimatedGlobalPose(Vision.Cameras.FrontLeft).get().estimatedPose.toPose2d();
+        } catch(Exception E){
+            return Constants.isRedAlliance ? new Pose2d(12.51, 4.03, new Rotation2d(Math.PI)) : new Pose2d(4.08, 4.03, new Rotation2d(Math.PI));
+        }
+      }
+      return initialPose;
+    }
+  }
+  public SendableChooser<Chooser> setUpInitialChooser(){
+    SendableChooser<Chooser> chooser = new SendableChooser<>();
+    chooser.addOption("redLeft", Chooser.REDLEFT);
+    chooser.addOption("redRight", Chooser.REDRIGHT);
+    chooser.addOption("blueLeft", Chooser.BLUELEFT);
+    chooser.addOption("blueRight", Chooser.BLUERIGHT);
+    chooser.addOption("cameras", Chooser.CAMERAS);
+    chooser.setDefaultOption("cameras", Chooser.CAMERAS);
+    SmartDashboard.putData("Initial Position Chooser", chooser);
+    return chooser;
   }
 }

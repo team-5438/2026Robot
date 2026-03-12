@@ -6,29 +6,49 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
+import frc.robot.RobotContainer.Chooser;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.subsystems.swervedrive.Vision;
 import gg.questnav.questnav.PoseFrame;
 import gg.questnav.questnav.QuestNav;
 
 public class QuestNavSubsystem extends SubsystemBase {
   public QuestNav questNav;
   SwerveSubsystem swerveSubsystem;
+  SendableChooser<Chooser> initialChooser;
+  Pose2d initialPose2d;
+  Pose3d initialPose3d, questPose;
 
 
   /** Creates a new QuestNavSubsystem. */
-  public QuestNavSubsystem(SwerveSubsystem swerveSubsystem) {
+  public QuestNavSubsystem(SwerveSubsystem swerveSubsystem, Vision vision, SendableChooser<Chooser> initialChooser) {
     this.swerveSubsystem = swerveSubsystem;
     questNav = new QuestNav();
-    Pose3d robotPose = Constants.QuestNav.robotPose;
-    Pose3d questPose = robotPose.transformBy(Constants.QuestNav.ROBOT_TO_QUEST);
-    questNav.setPose(questPose);
 
+    this.initialChooser = initialChooser;
+    initialPose2d = initialChooser.getSelected().getInitialPose(vision);
+    initialPose3d = new Pose3d(initialPose2d);
+    questPose = initialPose3d.transformBy(Constants.QuestNav.ROBOT_TO_QUEST);
+    questNav.setPose(questPose);
+    swerveSubsystem.resetOdometry(initialPose2d);
+
+    initialChooser.onChange((chooser) -> {
+      initialPose2d = initialChooser.getSelected().getInitialPose(vision);
+      initialPose3d = new Pose3d(initialPose2d);
+      questPose = initialPose3d.transformBy(Constants.QuestNav.ROBOT_TO_QUEST);
+      questNav.setPose(questPose);
+      swerveSubsystem.resetOdometry(initialPose2d);
+    });
+    
   }
 
   @Override
