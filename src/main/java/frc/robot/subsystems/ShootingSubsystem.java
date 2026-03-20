@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -15,9 +17,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ShootingSubsystem extends SubsystemBase {
-  public TalonFX shootWheels;
-  public TalonFX feedWheels;
-  public TalonFX hoodAngleMotor;
+  public TalonFX shootWheelsLeft;
+  public TalonFX shootWheelsRight;
+  public SparkMax feedWheels;
+  public SparkMax hoodAngleMotor;
   public DutyCycleEncoder hoodAngleEncoder;
   public double hoodAngleEncoderValue;
 
@@ -27,13 +30,14 @@ public class ShootingSubsystem extends SubsystemBase {
 
   /** Creates a new ShootingSubsystem. */
   public ShootingSubsystem() {
-    shootWheels = new TalonFX(Constants.Shooting.shootWheelsID);
-    feedWheels = new TalonFX(Constants.Shooting.feedWheelsID);
-    hoodAngleMotor = new TalonFX(Constants.Shooting.hoodAngleMotorID);
+    shootWheelsLeft = new TalonFX(Constants.Shooting.shootWheelsLeftID);
+    shootWheelsRight = new TalonFX(Constants.Shooting.shootWheelsRightID);
+    feedWheels = new SparkMax(Constants.Shooting.feedWheelsID, MotorType.kBrushless);
+    hoodAngleMotor = new SparkMax(Constants.Shooting.hoodAngleMotorID, MotorType.kBrushless);
     hoodAngleEncoder = new DutyCycleEncoder(Constants.Shooting.hoodAngleEncoderID);
 
-    tab = Shuffleboard.getTab("Intake Subsystem");
-    hoodAngleEncoderEntry = tab.add("deployEncoder", 0.0).getEntry();
+    tab = Shuffleboard.getTab("Shooting Subsystem");
+    hoodAngleEncoderEntry = tab.add("hoodEncoder", 0.0).getEntry();
   }
 
   @Override

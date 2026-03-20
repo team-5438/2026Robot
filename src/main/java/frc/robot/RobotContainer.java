@@ -7,6 +7,8 @@ package frc.robot;
 import frc.robot.commands.SetIntakeCommand;
 import frc.robot.commands.FeedCommand;
 import frc.robot.commands.IntakeWheelsCommand;
+import frc.robot.commands.ManualHoodCommand;
+import frc.robot.commands.ManualIntakeCommand;
 import frc.robot.commands.ShootingWheelsCommand;
 import frc.robot.commands.SpencerAutoAim;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -146,17 +148,22 @@ public class RobotContainer {
     driver.y().onTrue(new InstantCommand(swerveSubsystem::zeroGyro));
 
     /* -------OPERATOR CONTROLS--------- */
-    operator.R2().whileTrue(new FeedCommand(shootingSubsystem, 0.5)); // Feed
+    operator.R2().whileTrue(new FeedCommand(shootingSubsystem, 1)); // Feed
     operator.options().whileTrue(new FeedCommand(shootingSubsystem, -0.5)); // Reverse Feed (hopefully never used)
     
-    operator.R1().whileTrue(new ShootingWheelsCommand(shootingSubsystem, spencerAutoAim)); // Spin up to shoot balls
+    operator.R1().whileTrue(new ShootingWheelsCommand(shootingSubsystem, spencerAutoAim, 1)); // Spin up to shoot balls
 
-    operator.L2().whileTrue(new IntakeWheelsCommand(intakeSubsystem, 1)); // Intake balls
+    operator.L2().whileTrue(new IntakeWheelsCommand(intakeSubsystem, 0.7)); // Intake balls
     operator.L1().whileTrue(new IntakeWheelsCommand(intakeSubsystem, -0.5)); // Outtake (hopefully never used)
     
-    operator.square().onTrue(new SetIntakeCommand(intakeSubsystem, 0.5)); //NOT ACTUAL VALUE (deploy intake)
-    operator.circle().onTrue(new SetIntakeCommand(intakeSubsystem, 0)); //NOT ACTUAL VALUE (withdraw intake)
+    operator.cross().onTrue(new SetIntakeCommand(intakeSubsystem, 0.75)); //NOT ACTUAL VALUE (deploy intake)
+    operator.circle().onTrue(new SetIntakeCommand(intakeSubsystem, 0.94)); //NOT ACTUAL VALUE (withdraw intake)
 
+    operator.povUp().whileTrue(new ManualIntakeCommand(intakeSubsystem, 0.15));
+    operator.povDown().whileTrue(new ManualIntakeCommand(intakeSubsystem, -0.05));
+
+    operator.povLeft().whileTrue(new ManualHoodCommand(shootingSubsystem, 1));
+    operator.povRight().whileTrue(new ManualHoodCommand(shootingSubsystem, -1));
   }
 
   /**

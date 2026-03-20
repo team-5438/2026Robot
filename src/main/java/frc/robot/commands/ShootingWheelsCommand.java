@@ -12,34 +12,37 @@ import frc.robot.Robot;
 public class ShootingWheelsCommand extends Command {
   ShootingSubsystem shootingSubsystem;
   SpencerAutoAim spencerAutoAim;
+  double speed;
   
   /** Creates a new ShootCommand. */
-  public ShootingWheelsCommand(ShootingSubsystem shootingSubsystem, SpencerAutoAim spencerAutoAim) {
+  public ShootingWheelsCommand(ShootingSubsystem shootingSubsystem, SpencerAutoAim spencerAutoAim, double speed) {
     this.shootingSubsystem = shootingSubsystem;
     this.spencerAutoAim = spencerAutoAim;
+    this.speed = speed;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(shootingSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shootingSubsystem.shootWheels.set(0.9); //NOT TESTED SPEED
+    shootingSubsystem.shootWheelsRight.set(speed); //NOT TESTED SPEED
+    shootingSubsystem.shootWheelsLeft.set(-speed); //NOT TESTED SPEED
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     if(spencerAutoAim.autoAimOn){
-      shootingSubsystem.shootWheels.set(0.1); //NOT TESTED SPEED
+      shootingSubsystem.shootWheelsRight.set(0.1); //NOT TESTED SPEED
+      shootingSubsystem.shootWheelsLeft.set(-0.1); //NOT TESTED SPEED
     } else {
-      shootingSubsystem.shootWheels.set(0);
+      shootingSubsystem.shootWheelsRight.set(0);
+      shootingSubsystem.shootWheelsLeft.set(0);
     }
   }
 

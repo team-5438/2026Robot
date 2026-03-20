@@ -60,7 +60,8 @@ public class SpencerAutoAim extends Command {
   public void initialize() {
     autoAimOn = true;
     rightRotation = () -> MathUtil.applyDeadband(driver.getRightX(), Constants.Driver.rightStick.X);
-    shootingSubsystem.shootWheels.set(0.1);
+    shootingSubsystem.shootWheelsLeft.set(0.1);
+    shootingSubsystem.shootWheelsRight.set(0.1);
     autoAimEntry.setBoolean(autoAimOn);
 
   }
@@ -93,7 +94,8 @@ public class SpencerAutoAim extends Command {
   @Override
   public void end(boolean interrupted) {
     autoAimOn = false;
-    shootingSubsystem.shootWheels.set(0);
+    shootingSubsystem.shootWheelsLeft.set(0);
+    shootingSubsystem.shootWheelsRight.set(0);
     autoAimEntry.setBoolean(autoAimOn);
   }
 

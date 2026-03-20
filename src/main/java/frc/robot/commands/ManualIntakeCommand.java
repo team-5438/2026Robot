@@ -4,24 +4,28 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.ShootingSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class FeedCommand extends Command {
-  ShootingSubsystem shootingSubsystem;
-  double feedSpeed;
-  /** Creates a new FeedCommand. */
-  public FeedCommand(ShootingSubsystem shootingSubsystem, double feedSpeed) {
-    this.shootingSubsystem = shootingSubsystem;
-    this.feedSpeed = feedSpeed;
+public class ManualIntakeCommand extends Command {
+  IntakeSubsystem intakeSubsystem;
+  double speed;
+  /** Creates a new ManualIntakeCommand. */
+  public ManualIntakeCommand(IntakeSubsystem intakeSubsystem, double speed) {
     // Use addRequirements() here to declare subsystem dependencies.
+    this.intakeSubsystem = intakeSubsystem;
+    this.speed = speed;
+
+    addRequirements(intakeSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shootingSubsystem.feedWheels.set(feedSpeed);
+    intakeSubsystem.intakeDeployLeft.set(speed);
+    intakeSubsystem.intakeDeployRight.set(-speed);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -31,7 +35,8 @@ public class FeedCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shootingSubsystem.feedWheels.set(0);
+    intakeSubsystem.intakeDeployRight.set(0);
+    intakeSubsystem.intakeDeployLeft.set(0);
   }
 
   // Returns true when the command should end.

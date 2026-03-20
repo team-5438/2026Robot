@@ -5,10 +5,13 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -16,7 +19,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class IntakeSubsystem extends SubsystemBase {
-  public TalonFX intakeDeploy; //part that extends the intake out of the frame
+  public SparkMax intakeDeployLeft; //part that extends the intake out of the frame
+  public SparkMax intakeDeployRight; //part that extends the intake out of the frame
   public TalonFX intakeSpinny; //wheels to intake balls
   public DutyCycleEncoder deployEncoder;
   public double deployEncoderDistance;
@@ -28,7 +32,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
-    intakeDeploy = new TalonFX(Constants.Intake.intakeDeployID);
+    intakeDeployLeft = new SparkMax(Constants.Intake.intakeDeployLeftID, MotorType.kBrushless);
+    intakeDeployRight = new SparkMax(Constants.Intake.intakeDeployRightID, MotorType.kBrushless);
     intakeSpinny = new TalonFX(Constants.Intake.intakeSpinnyID);
     deployEncoder = new DutyCycleEncoder(Constants.Intake.deployEncoderID);
 

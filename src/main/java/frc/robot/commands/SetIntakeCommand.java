@@ -34,18 +34,23 @@ public class SetIntakeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intakeSubsystem.intakeDeploy.set(intakePID.calculate(intakeSubsystem.deployEncoder.get(), angleMeasurement)); //NOT REAL MEASUREMENT YET
+    intakeSubsystem.intakeDeployLeft.set(intakePID.calculate(intakeSubsystem.deployEncoderDistance, angleMeasurement)); //NOT REAL MEASUREMENT YET
+    intakeSubsystem.intakeDeployRight.set(-intakePID.calculate(intakeSubsystem.deployEncoderDistance, angleMeasurement)); //NOT REAL MEASUREMENT YET
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intakeSubsystem.intakeDeploy.set(0);
+    intakeSubsystem.intakeDeployLeft.set(0);
+    intakeSubsystem.intakeDeployRight.set(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if(intakeSubsystem.deployEncoder.get() >= angleMeasurement - 0.02 && intakeSubsystem.deployEncoder.get() <= angleMeasurement + 0.02){
+      return true;
+    }
     return false;
   }
 }

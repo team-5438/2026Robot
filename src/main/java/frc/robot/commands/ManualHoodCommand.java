@@ -5,23 +5,24 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.Shooting;
 import frc.robot.subsystems.ShootingSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class FeedCommand extends Command {
+public class ManualHoodCommand extends Command {
+  /** Creates a new ManualHoodCommand. */
   ShootingSubsystem shootingSubsystem;
-  double feedSpeed;
-  /** Creates a new FeedCommand. */
-  public FeedCommand(ShootingSubsystem shootingSubsystem, double feedSpeed) {
-    this.shootingSubsystem = shootingSubsystem;
-    this.feedSpeed = feedSpeed;
+  double speed;
+  public ManualHoodCommand(ShootingSubsystem shootingSubsystem, double speed) {
     // Use addRequirements() here to declare subsystem dependencies.
+    this.shootingSubsystem = shootingSubsystem;
+    this.speed = speed;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shootingSubsystem.feedWheels.set(feedSpeed);
+    shootingSubsystem.hoodAngleMotor.set(speed);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -31,7 +32,7 @@ public class FeedCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shootingSubsystem.feedWheels.set(0);
+    shootingSubsystem.hoodAngleMotor.set(0);
   }
 
   // Returns true when the command should end.

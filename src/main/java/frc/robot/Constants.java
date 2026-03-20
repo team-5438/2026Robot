@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Inches;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
@@ -12,6 +14,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DutyCycle;
 import frc.robot.utils.Controller;
 import frc.robot.utils.GetAlliance;
@@ -60,19 +63,22 @@ public final class Constants {
 
   public static final class Intake {
     /* -----TODO: Add actual IDs----- */
-    public static final int intakeDeployID = 1; //NOT REAL ID
-    public static final int intakeSpinnyID = 2; //NOT REAL ID
-    public static final int deployEncoderID = 0; //NOT REAL ID
-    public static final PIDController intakeDeployPID = new PIDController(1, 0, 1); //UNTESTED
+    public static final int intakeDeployLeftID = 14;
+    public static final int intakeDeployRightID = 17;
+    public static final int intakeSpinnyID = 6;
+    public static final int deployEncoderID = 0;
+    public static final PIDController intakeDeployPID = new PIDController(0.7, 0, 0); //UNTESTED
 
   }
 
   public static final class Shooting {
     /* ----TODO: Add actual IDs----- */
-    public static final int shootWheelsID = 4; //NOT REAL ID
-    public static final int feedWheelsID = 3; //NOT REAL ID
-    public static final int hoodAngleMotorID = 6; //NOT REAL ID
-    public static final int hoodAngleEncoderID = 1; //NOT REAL ID
+    public static final int shootWheelsLeftID = 19;
+    public static final int shootWheelsRightID = 18;
+    public static final int feedWheelsID = 7;
+    public static final int hoodAngleMotorID = 24;
+    public static final int hoodAngleEncoderID = 9;
+    public static final PIDController hoodPID = new PIDController(1, 0, 0);
   }
 
   public static final class QuestNav {
@@ -83,7 +89,13 @@ public final class Constants {
         0.02, // Trust down to 2cm in Y direction
         0.035 // Trust down to 2 degrees rotational
       );
-    public static final Transform3d ROBOT_TO_QUEST = new Transform3d( /*TODO: Put your x, y, z, yaw, pitch, and roll offsets here!*/ );
+    //public static final Transform3d ROBOT_TO_QUEST = new Transform3d(-11,11,13.0,new Rotation3d());
+    public static final Transform3d ROBOT_TO_QUEST = new Transform3d(
+      Distance.ofBaseUnits(-11, Inches), 
+      Distance.ofBaseUnits(11, Inches), 
+      Distance.ofBaseUnits(12.5, Inches), 
+      new Rotation3d(0, 0, 225));
+    //13 inches z
 
   }
 }
