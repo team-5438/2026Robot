@@ -19,7 +19,7 @@ import frc.robot.Constants;
 public class ShootingSubsystem extends SubsystemBase {
   public TalonFX shootWheelsLeft;
   public TalonFX shootWheelsRight;
-  public SparkMax feedWheels;
+  public TalonFX feedWheels;
   public SparkMax hoodAngleMotor;
   public DutyCycleEncoder hoodAngleEncoder;
   public double hoodAngleEncoderValue;
@@ -32,7 +32,7 @@ public class ShootingSubsystem extends SubsystemBase {
   public ShootingSubsystem() {
     shootWheelsLeft = new TalonFX(Constants.Shooting.shootWheelsLeftID);
     shootWheelsRight = new TalonFX(Constants.Shooting.shootWheelsRightID);
-    feedWheels = new SparkMax(Constants.Shooting.feedWheelsID, MotorType.kBrushless);
+    feedWheels = new TalonFX(Constants.Shooting.feedWheelsID);
     hoodAngleMotor = new SparkMax(Constants.Shooting.hoodAngleMotorID, MotorType.kBrushless);
     hoodAngleEncoder = new DutyCycleEncoder(Constants.Shooting.hoodAngleEncoderID);
 

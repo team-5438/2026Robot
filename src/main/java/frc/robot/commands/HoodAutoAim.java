@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import frc.robot.Constants;
 import frc.robot.subsystems.ShootingSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -15,12 +16,14 @@ public class HoodAutoAim extends Command {
   ShootingSubsystem shootingSubsystem;
   SwerveSubsystem swerveSubsystem;
   PIDController hoodPID;
+  double outputtedAngle;
+  CommandPS5Controller operator;
   /** Creates a new HoodAutoAim. */
-  public HoodAutoAim(ShootingSubsystem shootingSubsystem, SwerveSubsystem swerveSubsystem) {
+  public HoodAutoAim(ShootingSubsystem shootingSubsystem, SwerveSubsystem swerveSubsystem, CommandPS5Controller operator) {
     this.shootingSubsystem = shootingSubsystem;
     this.swerveSubsystem = swerveSubsystem;
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(shootingSubsystem);
+    this.operator = operator;
+    hoodPID = Constants.Shooting.hoodPID;
   }
 
   // Called when the command is initially scheduled.
@@ -34,6 +37,12 @@ public class HoodAutoAim extends Command {
     double distanceY = swerveSubsystem.getPose().getY() - Constants.HUB_Y;
     double distanceFromHub = Math.sqrt((Math.pow(distanceX, 2) + Math.pow(distanceY, 2))); //Pythagorean Theorem
     /* -------NOTE: PLUG IN DISTANCEFROMHUB TO A FORMULA TO GET CORRECT ANGLE */
+    outputtedAngle = 
+      -0.00000501613*Math.pow(distanceFromHub, 2)
+      + 0.000211915*distanceFromHub
+      + 0.608214;
+    
+    shootingSubsystem.hoodAngleMotor.set(hoodPID.calculate(shootingSubsystem.hoodAngleEncoderValue, outputtedAngle));
 
 
   }
@@ -45,6 +54,9 @@ public class HoodAutoAim extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if(operator.povUp().getAsBoolean() || operator.povDown().getAsBoolean()){
+      return true;
+    }
     return false;
   }
 }

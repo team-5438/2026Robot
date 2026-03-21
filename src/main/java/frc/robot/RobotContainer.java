@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.commands.SetIntakeCommand;
 import frc.robot.commands.FeedCommand;
+import frc.robot.commands.HoodAutoAim;
 import frc.robot.commands.IntakeWheelsCommand;
 import frc.robot.commands.ManualHoodCommand;
 import frc.robot.commands.ManualIntakeCommand;
@@ -41,6 +42,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
@@ -96,6 +98,11 @@ public class RobotContainer {
     
     //Create the NamedCommands that will be used in PathPlanner
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
+    NamedCommands.registerCommand("spin up", new ShootingWheelsCommand(shootingSubsystem, spencerAutoAim, 0.95));
+    NamedCommands.registerCommand("shoot", new FeedCommand(shootingSubsystem, 1));
+    NamedCommands.registerCommand("auto aim", new HoodAutoAim(shootingSubsystem, swerveSubsystem, operator));
+    NamedCommands.registerCommand("intake", new IntakeWheelsCommand(intakeSubsystem, 1));
+    NamedCommands.registerCommand("deploy intake", new SetIntakeCommand(intakeSubsystem, 0.74));
 
     //Have the autoChooser pull in all PathPlanner autos as options
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -105,7 +112,7 @@ public class RobotContainer {
 
     //Add a simple auto option to have the robot drive forward for 1 second then stop
     autoChooser.addOption("Drive Forward", swerveSubsystem.driveForward().withTimeout(1));
-    
+
     //Put the autoChooser on the SmartDashboard
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
@@ -148,22 +155,24 @@ public class RobotContainer {
     driver.y().onTrue(new InstantCommand(swerveSubsystem::zeroGyro));
 
     /* -------OPERATOR CONTROLS--------- */
-    operator.R2().whileTrue(new FeedCommand(shootingSubsystem, 1)); // Feed
-    operator.options().whileTrue(new FeedCommand(shootingSubsystem, -0.5)); // Reverse Feed (hopefully never used)
+    operator.R1().whileTrue(new FeedCommand(shootingSubsystem, 1)); // Feed
+    operator.options().whileTrue(new ParallelCommandGroup(new FeedCommand(shootingSubsystem, -0.5), new ShootingWheelsCommand(shootingSubsystem, spencerAutoAim, -0.5))); // Reverse Feed (hopefully never used)
     
-    operator.R1().whileTrue(new ShootingWheelsCommand(shootingSubsystem, spencerAutoAim, 1)); // Spin up to shoot balls
+    operator.R2().whileTrue(new ShootingWheelsCommand(shootingSubsystem, spencerAutoAim, 1)); // Spin up to shoot balls
 
-    operator.L2().whileTrue(new IntakeWheelsCommand(intakeSubsystem, 0.7)); // Intake balls
+    operator.L2().whileTrue(new IntakeWheelsCommand(intakeSubsystem, 1)); // Intake balls
     operator.L1().whileTrue(new IntakeWheelsCommand(intakeSubsystem, -0.5)); // Outtake (hopefully never used)
     
     operator.cross().onTrue(new SetIntakeCommand(intakeSubsystem, 0.75)); //NOT ACTUAL VALUE (deploy intake)
-    operator.circle().onTrue(new SetIntakeCommand(intakeSubsystem, 0.94)); //NOT ACTUAL VALUE (withdraw intake)
+    operator.square().onTrue(new SetIntakeCommand(intakeSubsystem, 0.98)); //NOT ACTUAL VALUE (withdraw intake)
 
-    operator.povUp().whileTrue(new ManualIntakeCommand(intakeSubsystem, 0.15));
-    operator.povDown().whileTrue(new ManualIntakeCommand(intakeSubsystem, -0.05));
+    operator.povRight().whileTrue(new ManualIntakeCommand(intakeSubsystem, 0.15));
+    operator.povLeft().whileTrue(new ManualIntakeCommand(intakeSubsystem, -0.05));
 
-    operator.povLeft().whileTrue(new ManualHoodCommand(shootingSubsystem, 1));
-    operator.povRight().whileTrue(new ManualHoodCommand(shootingSubsystem, -1));
+    operator.povDown().whileTrue(new ManualHoodCommand(shootingSubsystem, 0.06));
+    operator.povUp().whileTrue(new ManualHoodCommand(shootingSubsystem, -0.06));
+
+    operator.triangle().toggleOnTrue(new HoodAutoAim(shootingSubsystem, swerveSubsystem, operator));
   }
 
   /**
@@ -179,8 +188,8 @@ public class RobotContainer {
   public enum Chooser {
     REDLEFT(new Pose2d(12.929, 0.419, new Rotation2d(Math.PI))),
     REDRIGHT(new Pose2d(12.929, 7.641,new Rotation2d(Math.PI))),
-    BLUELEFT(new Pose2d(3.661, 7.641, new Rotation2d(Math.PI))),
-    BLUERIGHT(new Pose2d(3.661, 0.419, new Rotation2d(Math.PI))),
+    BLUELEFT(new Pose2d(3.661, 7.641, new Rotation2d(0))),
+    BLUERIGHT(new Pose2d(3.661, 0.419, new Rotation2d(0))),
     CAMERAS(null);
 
     private Pose2d initialPose;

@@ -52,6 +52,7 @@ import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -165,6 +166,10 @@ public class SwerveSubsystem extends SubsystemBase
   }
  
  
+  // @AutoLogOutput(key = "Posethings/robotPose")
+  // public Pose2d getPoseBleh(){
+  //   return swerveDrive.getPose();
+  // }
  @Override
   public void periodic()
   {
@@ -174,12 +179,15 @@ public class SwerveSubsystem extends SubsystemBase
       swerveDrive.updateOdometry();
       vision.updatePoseEstimation(swerveDrive);
       swervePose = swerveDrive.getPose();
+      // System.out.println("pose: " + swervePose.toString());
+      // Logger.recordOutput("robotPoseThing", swervePose);
       //only ask the cameras for the best reef target if we are using vision, otherwise
       //it will be 0
-      currAprilTagTarget = vision.getBestReefTarget();
-      distanceToTarget = vision.getDistanceFromAprilTag(currAprilTagTarget);
+      // currAprilTagTarget = vision.getBestReefTarget();
+      // distanceToTarget = vision.getDistanceFromAprilTag(currAprilTagTarget);
       //SharedData.getInstance().setCurrentTagID(currAprilTagTarget);
     }
+    Logger.recordOutput("drive/pose", swerveDrive.getPose());
   }
 
   @Override

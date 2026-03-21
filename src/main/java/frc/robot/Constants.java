@@ -35,7 +35,7 @@ public final class Constants {
   {
     public static final boolean DRIVEWITHVISION = true;
   }
-  public static final PIDController anglePID = new PIDController(2, 0, 0.05);
+  public static final PIDController anglePID = new PIDController(1, 0, 0.02);
   public static final double HUB_X = isRedAlliance ? 11.91539 : 4.6253; //x of hub in meters
   public static final double HUB_Y = 4.034536; //y of hub in meters
 
@@ -67,7 +67,7 @@ public final class Constants {
     public static final int intakeDeployRightID = 17;
     public static final int intakeSpinnyID = 6;
     public static final int deployEncoderID = 0;
-    public static final PIDController intakeDeployPID = new PIDController(0.7, 0, 0); //UNTESTED
+    public static final PIDController intakeDeployPID = new PIDController(1.3, 0, 0); //UNTESTED
 
   }
 
@@ -78,7 +78,7 @@ public final class Constants {
     public static final int feedWheelsID = 7;
     public static final int hoodAngleMotorID = 24;
     public static final int hoodAngleEncoderID = 9;
-    public static final PIDController hoodPID = new PIDController(1, 0, 0);
+    public static final PIDController hoodPID = new PIDController(0.3, 0, 0);
   }
 
   public static final class QuestNav {
