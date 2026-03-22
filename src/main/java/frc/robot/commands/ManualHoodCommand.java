@@ -25,9 +25,13 @@ public class ManualHoodCommand extends Command {
     shootingSubsystem.hoodAngleMotor.set(speed);
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
+  // Called every time the scheduler runs w hile the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    // if(shootingSubsystem.hoodAngleEncoderValue <= 0.47 && speed < 0){
+    //   shootingSubsystem.hoodAngleMotor.set(0);
+    // }
+  }
 
   // Called once the command ends or is interrupted.
   @Override

@@ -30,8 +30,8 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    Logger.addDataReceiver(new WPILOGWriter());
-    Logger.addDataReceiver(new NT4Publisher());// name folder on drive logs.
+    // Logger.addDataReceiver(new WPILOGWriter());
+    // Logger.addDataReceiver(new NT4Publisher());// name folder on drive logs.
 
   }
 

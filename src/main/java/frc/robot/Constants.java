@@ -78,7 +78,7 @@ public final class Constants {
     public static final int feedWheelsID = 7;
     public static final int hoodAngleMotorID = 24;
     public static final int hoodAngleEncoderID = 9;
-    public static final PIDController hoodPID = new PIDController(0.3, 0, 0);
+    public static final PIDController hoodPID = new PIDController(2, 0, 0);
   }
 
   public static final class QuestNav {

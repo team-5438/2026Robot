@@ -179,7 +179,7 @@ public class SwerveSubsystem extends SubsystemBase
       swerveDrive.updateOdometry();
       vision.updatePoseEstimation(swerveDrive);
       swervePose = swerveDrive.getPose();
-      // System.out.println("pose: " + swervePose.toString());
+      // System.out.println(  "pose: " + swervePose.toString());
       // Logger.recordOutput("robotPoseThing", swervePose);
       //only ask the cameras for the best reef target if we are using vision, otherwise
       //it will be 0
@@ -187,7 +187,7 @@ public class SwerveSubsystem extends SubsystemBase
       // distanceToTarget = vision.getDistanceFromAprilTag(currAprilTagTarget);
       //SharedData.getInstance().setCurrentTagID(currAprilTagTarget);
     }
-    Logger.recordOutput("drive/pose", swerveDrive.getPose());
+    // Logger.recordOutput("drive/pose", swerveDrive.getPose());
   }
 
   @Override

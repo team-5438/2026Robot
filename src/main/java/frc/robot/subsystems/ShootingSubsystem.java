@@ -43,7 +43,7 @@ public class ShootingSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    hoodAngleEncoderValue = hoodAngleEncoder.get();
+    hoodAngleEncoderValue = hoodAngleEncoder.get() + 0.56;
     hoodAngleEncoderEntry.setDouble(hoodAngleEncoderValue);
   }
 }

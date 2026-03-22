@@ -169,8 +169,8 @@ public class RobotContainer {
     operator.povRight().whileTrue(new ManualIntakeCommand(intakeSubsystem, 0.15));
     operator.povLeft().whileTrue(new ManualIntakeCommand(intakeSubsystem, -0.05));
 
-    operator.povDown().whileTrue(new ManualHoodCommand(shootingSubsystem, 0.06));
-    operator.povUp().whileTrue(new ManualHoodCommand(shootingSubsystem, -0.06));
+    operator.povDown().whileTrue(new ManualHoodCommand(shootingSubsystem, 0.05));
+    operator.povUp().whileTrue(new ManualHoodCommand(shootingSubsystem, -0.05));
 
     operator.triangle().toggleOnTrue(new HoodAutoAim(shootingSubsystem, swerveSubsystem, operator));
   }
@@ -204,7 +204,7 @@ public class RobotContainer {
         try{
           return vision.getEstimatedGlobalPose(Vision.Cameras.FrontLeft).get().estimatedPose.toPose2d();
         } catch(Exception E){
-            return Constants.isRedAlliance ? new Pose2d(12.51, 4.03, new Rotation2d(Math.PI)) : new Pose2d(4.08, 4.03, new Rotation2d(Math.PI));
+          return Constants.isRedAlliance ? new Pose2d(12.97, 4.03, new Rotation2d(Math.PI)) : new Pose2d(4.08, 4.03, new Rotation2d(0));
         }
       }
       return initialPose;

@@ -4,6 +4,9 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -71,9 +74,10 @@ public class QuestNavSubsystem extends SubsystemBase {
         Pose3d robotPose = questPose.transformBy(Constants.QuestNav.ROBOT_TO_QUEST.inverse());
 
         // You can put some sort of filtering here if you would like!
-
-        // Add the measurement to our estimator
-        swerveSubsystem.swerveDrive.addVisionMeasurement(robotPose.toPose2d(), timestamp, Constants.QuestNav.QUESTNAV_STD_DEVS);
+        if((robotPose.getMeasureY().in(Inches) <= 317.69 || robotPose.getMeasureX().in(Inches) <= 651.22) && (robotPose.getX() > 0 && robotPose.getY() > 0)){
+          // Add the measurement to our estimator
+          swerveSubsystem.swerveDrive.addVisionMeasurement(robotPose.toPose2d(), timestamp, Constants.QuestNav.QUESTNAV_STD_DEVS);
+        }
       }
     }
   }
