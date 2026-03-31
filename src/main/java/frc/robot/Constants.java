@@ -78,6 +78,8 @@ public final class Constants {
     public static final int feedWheelsID = 7;
     public static final int hoodAngleMotorID = 24;
     public static final int hoodAngleEncoderID = 9;
+    // public static final int hoodAngleEncoderID_A = 8;
+    // public static final int hoodAngleEncoderID_B = 9;
     public static final PIDController hoodPID = new PIDController(2, 0, 0);
   }
 

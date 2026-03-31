@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -34,6 +35,7 @@ public class ShootingSubsystem extends SubsystemBase {
     shootWheelsRight = new TalonFX(Constants.Shooting.shootWheelsRightID);
     feedWheels = new TalonFX(Constants.Shooting.feedWheelsID);
     hoodAngleMotor = new SparkMax(Constants.Shooting.hoodAngleMotorID, MotorType.kBrushless);
+    // hoodAngleEncoder = new Encoder(Constants.Shooting.hoodAngleEncoderID_A, Constants.Shooting.hoodAngleEncoderID_B);
     hoodAngleEncoder = new DutyCycleEncoder(Constants.Shooting.hoodAngleEncoderID);
 
     tab = Shuffleboard.getTab("Shooting Subsystem");
@@ -43,7 +45,7 @@ public class ShootingSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    hoodAngleEncoderValue = hoodAngleEncoder.get() + 0.56;
+    hoodAngleEncoderValue = hoodAngleEncoder.get();
     hoodAngleEncoderEntry.setDouble(hoodAngleEncoderValue);
   }
 }

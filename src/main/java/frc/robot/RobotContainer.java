@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.commands.SetIntakeCommand;
 import frc.robot.commands.FeedCommand;
 import frc.robot.commands.HoodAutoAim;
+import frc.robot.commands.HungryHippo;
 import frc.robot.commands.IntakeWheelsCommand;
 import frc.robot.commands.ManualHoodCommand;
 import frc.robot.commands.ManualIntakeCommand;
@@ -163,16 +164,18 @@ public class RobotContainer {
     operator.L2().whileTrue(new IntakeWheelsCommand(intakeSubsystem, 1)); // Intake balls
     operator.L1().whileTrue(new IntakeWheelsCommand(intakeSubsystem, -0.5)); // Outtake (hopefully never used)
     
-    operator.cross().onTrue(new SetIntakeCommand(intakeSubsystem, 0.75)); //NOT ACTUAL VALUE (deploy intake)
-    operator.square().onTrue(new SetIntakeCommand(intakeSubsystem, 0.98)); //NOT ACTUAL VALUE (withdraw intake)
+    operator.cross().onTrue(new SetIntakeCommand(intakeSubsystem, 0.75)); //(deploy intake)
+    operator.square().onTrue(new SetIntakeCommand(intakeSubsystem, 0.98)); //(withdraw intake)
 
-    operator.povRight().whileTrue(new ManualIntakeCommand(intakeSubsystem, 0.15));
-    operator.povLeft().whileTrue(new ManualIntakeCommand(intakeSubsystem, -0.05));
+    operator.povRight().whileTrue(new ManualIntakeCommand(intakeSubsystem, 0.15)); //manual intake out
+    operator.povLeft().whileTrue(new ManualIntakeCommand(intakeSubsystem, -0.05)); //manual intake in
 
-    operator.povDown().whileTrue(new ManualHoodCommand(shootingSubsystem, 0.05));
-    operator.povUp().whileTrue(new ManualHoodCommand(shootingSubsystem, -0.05));
+    operator.povDown().whileTrue(new ManualHoodCommand(shootingSubsystem, 0.05)); //manual hood down
+    operator.povUp().whileTrue(new ManualHoodCommand(shootingSubsystem, -0.05)); //manual hood up
 
     operator.triangle().toggleOnTrue(new HoodAutoAim(shootingSubsystem, swerveSubsystem, operator));
+    
+    operator.touchpad().toggleOnTrue(new HungryHippo(intakeSubsystem)); //intake goes up and down to try and free balls for shooting
   }
 
   /**

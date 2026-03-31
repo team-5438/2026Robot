@@ -10,22 +10,22 @@ import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class SetIntakeCommand extends Command {
+public class HungryHippo extends Command {
+  /** Creates a new HungryHippo. */
   IntakeSubsystem intakeSubsystem;
   PIDController intakePID;
-  double angleMeasurement;
-  /** Creates a new IntakeCommand. */
-  public SetIntakeCommand(IntakeSubsystem intakeSubsystem, double angleMeasurement) {
+
+  /**
+   * 
+   * Runs the intake up and down a lot...Good for trying to shoot and stuff...Great name
+   * 
+   */
+  public HungryHippo(IntakeSubsystem intakeSubsystem) {
     this.intakeSubsystem = intakeSubsystem;
     intakePID = Constants.Intake.intakeDeployPID;
-    this.angleMeasurement = angleMeasurement;
 
     addRequirements(intakeSubsystem);
   }
-
-
-  /* --------NOTE: WE MIGHT NEED A FEED FORWARD ON INTAKE---------- */
-
 
   // Called when the command is initially scheduled.
   @Override
@@ -34,23 +34,22 @@ public class SetIntakeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intakeSubsystem.intakeDeployLeft.set(intakePID.calculate(intakeSubsystem.deployEncoderDistance, angleMeasurement));
-    intakeSubsystem.intakeDeployRight.set(-intakePID.calculate(intakeSubsystem.deployEncoderDistance, angleMeasurement));
+    if(intakeSubsystem.deployEncoderDistance < 0.93){
+      intakeSubsystem.intakeDeployLeft.set(intakePID.calculate(intakeSubsystem.deployEncoderDistance, 0.95));
+      intakeSubsystem.intakeDeployRight.set(-intakePID.calculate(intakeSubsystem.deployEncoderDistance, 0.95));
+    } else {
+      intakeSubsystem.intakeDeployLeft.set(intakePID.calculate(intakeSubsystem.deployEncoderDistance, 0.77));
+      intakeSubsystem.intakeDeployRight.set(-intakePID.calculate(intakeSubsystem.deployEncoderDistance, 0.77));
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    intakeSubsystem.intakeDeployLeft.set(0);
-    intakeSubsystem.intakeDeployRight.set(0);
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(intakeSubsystem.deployEncoderDistance >= angleMeasurement - 0.02 && intakeSubsystem.deployEncoderDistance <= angleMeasurement + 0.02){
-      return true;
-    }
     return false;
   }
 }
