@@ -60,7 +60,7 @@ public class SpencerAutoAim extends Command {
   public void initialize() {
     autoAimOn = true;
     rightRotation = () -> MathUtil.applyDeadband(driver.getRightX(), Constants.Driver.rightStick.X);
-    shootingSubsystem.shootWheelsLeft.set(0.1);
+    shootingSubsystem.shootWheelsLeft.set(-0.1);
     shootingSubsystem.shootWheelsRight.set(0.1);
     autoAimEntry.setBoolean(autoAimOn);
 

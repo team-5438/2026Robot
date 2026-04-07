@@ -5,10 +5,12 @@
 package frc.robot;
 
 import frc.robot.commands.SetIntakeCommand;
+import frc.robot.commands.AutoAdjustingShootyWheels;
 import frc.robot.commands.FeedCommand;
 import frc.robot.commands.HoodAutoAim;
 import frc.robot.commands.HungryHippo;
 import frc.robot.commands.IntakeWheelsCommand;
+import frc.robot.commands.InterpolatingAutoAim;
 import frc.robot.commands.ManualHoodCommand;
 import frc.robot.commands.ManualIntakeCommand;
 import frc.robot.commands.ShootingWheelsCommand;
@@ -154,12 +156,16 @@ public class RobotContainer {
                           .onFalse(Commands.runOnce(() -> driveAngularVelocity.scaleRotation(1).scaleTranslation(1)));
     
     driver.y().onTrue(new InstantCommand(swerveSubsystem::zeroGyro));
+    driver.b().onTrue(new InstantCommand(shootingSubsystem::resetHoodEncoder));
 
     /* -------OPERATOR CONTROLS--------- */
     operator.R1().whileTrue(new FeedCommand(shootingSubsystem, 1)); // Feed
     operator.options().whileTrue(new ParallelCommandGroup(new FeedCommand(shootingSubsystem, -0.5), new ShootingWheelsCommand(shootingSubsystem, spencerAutoAim, -0.5))); // Reverse Feed (hopefully never used)
     
-    operator.R2().whileTrue(new ShootingWheelsCommand(shootingSubsystem, spencerAutoAim, 1)); // Spin up to shoot balls
+    operator.R2().whileTrue(new AutoAdjustingShootyWheels(shootingSubsystem, swerveSubsystem, spencerAutoAim, 0.925)); // Spin up to shoot balls
+    // operator.R3().whileTrue(new ShootingWheelsCommand(shootingSubsystem, spencerAutoAim, 0.9)); // Spin up to shoot balls
+    // driver.leftTrigger().whileTrue(new ShootingWheelsCommand(shootingSubsystem, spencerAutoAim, 1)); // Spin up to shoot balls
+    // driver.leftBumper().whileTrue(new ShootingWheelsCommand(shootingSubsystem, spencerAutoAim, 0.95)); // Spin up to shoot balls
 
     operator.L2().whileTrue(new IntakeWheelsCommand(intakeSubsystem, 1)); // Intake balls
     operator.L1().whileTrue(new IntakeWheelsCommand(intakeSubsystem, -0.5)); // Outtake (hopefully never used)
@@ -173,7 +179,7 @@ public class RobotContainer {
     operator.povDown().whileTrue(new ManualHoodCommand(shootingSubsystem, 0.05)); //manual hood down
     operator.povUp().whileTrue(new ManualHoodCommand(shootingSubsystem, -0.05)); //manual hood up
 
-    operator.triangle().toggleOnTrue(new HoodAutoAim(shootingSubsystem, swerveSubsystem, operator));
+    operator.triangle().toggleOnTrue(new InterpolatingAutoAim(shootingSubsystem, swerveSubsystem, operator));
     
     operator.touchpad().toggleOnTrue(new HungryHippo(intakeSubsystem)); //intake goes up and down to try and free balls for shooting
   }

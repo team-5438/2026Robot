@@ -22,7 +22,7 @@ public class ShootingSubsystem extends SubsystemBase {
   public TalonFX shootWheelsRight;
   public TalonFX feedWheels;
   public SparkMax hoodAngleMotor;
-  public DutyCycleEncoder hoodAngleEncoder;
+  public Encoder hoodAngleEncoder;
   public double hoodAngleEncoderValue;
 
   /* Shuffleboard stuff */
@@ -35,8 +35,8 @@ public class ShootingSubsystem extends SubsystemBase {
     shootWheelsRight = new TalonFX(Constants.Shooting.shootWheelsRightID);
     feedWheels = new TalonFX(Constants.Shooting.feedWheelsID);
     hoodAngleMotor = new SparkMax(Constants.Shooting.hoodAngleMotorID, MotorType.kBrushless);
-    // hoodAngleEncoder = new Encoder(Constants.Shooting.hoodAngleEncoderID_A, Constants.Shooting.hoodAngleEncoderID_B);
-    hoodAngleEncoder = new DutyCycleEncoder(Constants.Shooting.hoodAngleEncoderID);
+    hoodAngleEncoder = new Encoder(Constants.Shooting.hoodAngleEncoderID_A, Constants.Shooting.hoodAngleEncoderID_B);
+    // hoodAngleEncoder = new DutyCycleEncoder(Constants.Shooting.hoodAngleEncoderID);
 
     tab = Shuffleboard.getTab("Shooting Subsystem");
     hoodAngleEncoderEntry = tab.add("hoodEncoder", 0.0).getEntry();
@@ -47,5 +47,9 @@ public class ShootingSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     hoodAngleEncoderValue = hoodAngleEncoder.get();
     hoodAngleEncoderEntry.setDouble(hoodAngleEncoderValue);
+  }
+
+  public void resetHoodEncoder(){
+    hoodAngleEncoder.reset();
   }
 }

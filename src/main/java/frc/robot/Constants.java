@@ -35,7 +35,7 @@ public final class Constants {
   {
     public static final boolean DRIVEWITHVISION = true;
   }
-  public static final PIDController anglePID = new PIDController(1, 0, 0.02);
+  public static final PIDController anglePID = new PIDController(0.5, 0, 0.005);
   public static final double HUB_X = isRedAlliance ? 11.91539 : 4.6253; //x of hub in meters
   public static final double HUB_Y = 4.034536; //y of hub in meters
 
@@ -77,10 +77,10 @@ public final class Constants {
     public static final int shootWheelsRightID = 18;
     public static final int feedWheelsID = 7;
     public static final int hoodAngleMotorID = 24;
-    public static final int hoodAngleEncoderID = 9;
-    // public static final int hoodAngleEncoderID_A = 8;
-    // public static final int hoodAngleEncoderID_B = 9;
-    public static final PIDController hoodPID = new PIDController(2, 0, 0);
+    // public static final int hoodAngleEncoderID = 9;
+    public static final int hoodAngleEncoderID_A = 4;
+    public static final int hoodAngleEncoderID_B = 5;
+    public static final PIDController hoodPID = new PIDController(0.003, 0, 0);
   }
 
   public static final class QuestNav {
@@ -93,10 +93,10 @@ public final class Constants {
       );
     //public static final Transform3d ROBOT_TO_QUEST = new Transform3d(-11,11,13.0,new Rotation3d());
     public static final Transform3d ROBOT_TO_QUEST = new Transform3d(
-      Distance.ofBaseUnits(-11, Inches), 
-      Distance.ofBaseUnits(11, Inches), 
-      Distance.ofBaseUnits(12.5, Inches), 
-      new Rotation3d(0, 0, 225));
+      -0.2794, 
+      0.2794, 
+      0.3175,
+      new Rotation3d(0, 0, -1.25*Math.PI));
     //13 inches z
 
   }
