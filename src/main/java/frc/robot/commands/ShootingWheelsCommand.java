@@ -11,11 +11,11 @@ import frc.robot.Robot;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ShootingWheelsCommand extends Command {
   ShootingSubsystem shootingSubsystem;
-  SpencerAutoAim spencerAutoAim;
+  SpencerAutoAlign spencerAutoAim;
   double speed;
   
   /** Creates a new ShootCommand. */
-  public ShootingWheelsCommand(ShootingSubsystem shootingSubsystem, SpencerAutoAim spencerAutoAim, double speed) {
+  public ShootingWheelsCommand(ShootingSubsystem shootingSubsystem, SpencerAutoAlign spencerAutoAim, double speed) {
     this.shootingSubsystem = shootingSubsystem;
     this.spencerAutoAim = spencerAutoAim;
     this.speed = speed;
@@ -37,7 +37,7 @@ public class ShootingWheelsCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if(spencerAutoAim.autoAimOn){
+    if(spencerAutoAim.autoAlignOn){
       shootingSubsystem.shootWheelsRight.set(0.1); //NOT TESTED SPEED
       shootingSubsystem.shootWheelsLeft.set(-0.1); //NOT TESTED SPEED
     } else {

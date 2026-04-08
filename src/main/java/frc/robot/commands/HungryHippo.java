@@ -35,8 +35,8 @@ public class HungryHippo extends Command {
   @Override
   public void execute() {
     if(intakeSubsystem.deployEncoderDistance < 0.93){
-      intakeSubsystem.intakeDeployLeft.set(intakePID.calculate(intakeSubsystem.deployEncoderDistance, 0.95));
-      intakeSubsystem.intakeDeployRight.set(-intakePID.calculate(intakeSubsystem.deployEncoderDistance, 0.95));
+      intakeSubsystem.intakeDeployLeft.set(intakePID.calculate(intakeSubsystem.deployEncoderDistance, 0.275));
+      intakeSubsystem.intakeDeployRight.set(-intakePID.calculate(intakeSubsystem.deployEncoderDistance, 0.275));
     } else {
       intakeSubsystem.intakeDeployLeft.set(intakePID.calculate(intakeSubsystem.deployEncoderDistance, 0.77));
       intakeSubsystem.intakeDeployRight.set(-intakePID.calculate(intakeSubsystem.deployEncoderDistance, 0.77));

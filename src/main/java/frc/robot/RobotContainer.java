@@ -14,7 +14,7 @@ import frc.robot.commands.InterpolatingAutoAim;
 import frc.robot.commands.ManualHoodCommand;
 import frc.robot.commands.ManualIntakeCommand;
 import frc.robot.commands.ShootingWheelsCommand;
-import frc.robot.commands.SpencerAutoAim;
+import frc.robot.commands.SpencerAutoAlign;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.QuestNavSubsystem;
 import frc.robot.subsystems.ShootingSubsystem;
@@ -68,7 +68,8 @@ public class RobotContainer {
   public IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   public final CommandXboxController driver = new CommandXboxController(Constants.Driver.id);
   public final CommandPS5Controller operator = new CommandPS5Controller(Constants.Operator.id);
-  public SpencerAutoAim spencerAutoAim;
+  public SpencerAutoAlign spencerAutoAlign;
+  public InterpolatingAutoAim interpolatingAutoAim;
 
   private final SendableChooser<Command> autoChooser;
   public final SendableChooser<Chooser> initialChooser;
@@ -101,7 +102,7 @@ public class RobotContainer {
     
     //Create the NamedCommands that will be used in PathPlanner
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
-    NamedCommands.registerCommand("spin up", new ShootingWheelsCommand(shootingSubsystem, spencerAutoAim, 0.95));
+    NamedCommands.registerCommand("spin up", new ShootingWheelsCommand(shootingSubsystem, spencerAutoAlign, 0.95));
     NamedCommands.registerCommand("shoot", new FeedCommand(shootingSubsystem, 1));
     NamedCommands.registerCommand("auto aim", new HoodAutoAim(shootingSubsystem, swerveSubsystem, operator));
     NamedCommands.registerCommand("intake", new IntakeWheelsCommand(intakeSubsystem, 1));
@@ -143,13 +144,16 @@ public class RobotContainer {
     // /* rotation controls for the robot */
     // DoubleSupplier angularRotationX = () -> -MathUtil.applyDeadband(driver.getRawAxis(4), Constants.Driver.rightStick.X) / speedMod.getAsDouble();
     
-    ShuffleboardTab autoAimShuffleboardTab = Shuffleboard.getTab("AutoAim");
-    GenericEntry autoAimEntry = autoAimShuffleboardTab.add("Is it On?", false).getEntry();    
-    spencerAutoAim = new SpencerAutoAim(driver, swerveSubsystem, shootingSubsystem, autoAimEntry);
+    ShuffleboardTab autoAlignShuffleboardTab = Shuffleboard.getTab("Auto Aim/Align");
+    GenericEntry autoAlignEntry = autoAlignShuffleboardTab.add("Auto Align On", false).getEntry();    
+    spencerAutoAlign = new SpencerAutoAlign(driver, swerveSubsystem, autoAlignEntry);
+
+    GenericEntry autoAimEntry = autoAlignShuffleboardTab.add("Auto Aim On", false).getEntry();
+    interpolatingAutoAim = new InterpolatingAutoAim(shootingSubsystem, swerveSubsystem, operator);
 
     /* ----------DRIVER CONTROLS----------- */
 
-    driver.x().toggleOnTrue(spencerAutoAim);
+    driver.x().toggleOnTrue(spencerAutoAlign);
 
     swerveSubsystem.setDefaultCommand(swerveSubsystem.driveFieldOriented(driveAngularVelocity));
     driver.rightTrigger().onTrue(Commands.runOnce(() -> driveAngularVelocity.scaleRotation(0.4).scaleTranslation(0.4)))
@@ -158,11 +162,12 @@ public class RobotContainer {
     driver.y().onTrue(new InstantCommand(swerveSubsystem::zeroGyro));
     driver.b().onTrue(new InstantCommand(shootingSubsystem::resetHoodEncoder));
 
+    
     /* -------OPERATOR CONTROLS--------- */
     operator.R1().whileTrue(new FeedCommand(shootingSubsystem, 1)); // Feed
-    operator.options().whileTrue(new ParallelCommandGroup(new FeedCommand(shootingSubsystem, -0.5), new ShootingWheelsCommand(shootingSubsystem, spencerAutoAim, -0.5))); // Reverse Feed (hopefully never used)
+    operator.options().whileTrue(new ParallelCommandGroup(new FeedCommand(shootingSubsystem, -0.5), new ShootingWheelsCommand(shootingSubsystem, spencerAutoAlign, -0.5))); // Reverse Feed (hopefully never used)
     
-    operator.R2().whileTrue(new AutoAdjustingShootyWheels(shootingSubsystem, swerveSubsystem, spencerAutoAim, 0.925)); // Spin up to shoot balls
+    operator.R2().whileTrue(new AutoAdjustingShootyWheels(shootingSubsystem, swerveSubsystem, interpolatingAutoAim, 0.925)); // Spin up to shoot balls
     // operator.R3().whileTrue(new ShootingWheelsCommand(shootingSubsystem, spencerAutoAim, 0.9)); // Spin up to shoot balls
     // driver.leftTrigger().whileTrue(new ShootingWheelsCommand(shootingSubsystem, spencerAutoAim, 1)); // Spin up to shoot balls
     // driver.leftBumper().whileTrue(new ShootingWheelsCommand(shootingSubsystem, spencerAutoAim, 0.95)); // Spin up to shoot balls
@@ -170,16 +175,16 @@ public class RobotContainer {
     operator.L2().whileTrue(new IntakeWheelsCommand(intakeSubsystem, 1)); // Intake balls
     operator.L1().whileTrue(new IntakeWheelsCommand(intakeSubsystem, -0.5)); // Outtake (hopefully never used)
     
-    operator.cross().onTrue(new SetIntakeCommand(intakeSubsystem, 0.75)); //(deploy intake)
-    operator.square().onTrue(new SetIntakeCommand(intakeSubsystem, 0.98)); //(withdraw intake)
+    operator.cross().onTrue(new SetIntakeCommand(intakeSubsystem, 0.075)); //(deploy intake)
+    operator.square().onTrue(new SetIntakeCommand(intakeSubsystem, 0.305)); //(withdraw intake)
 
     operator.povRight().whileTrue(new ManualIntakeCommand(intakeSubsystem, 0.15)); //manual intake out
     operator.povLeft().whileTrue(new ManualIntakeCommand(intakeSubsystem, -0.05)); //manual intake in
 
-    operator.povDown().whileTrue(new ManualHoodCommand(shootingSubsystem, 0.05)); //manual hood down
-    operator.povUp().whileTrue(new ManualHoodCommand(shootingSubsystem, -0.05)); //manual hood up
+    operator.povDown().whileTrue(new ManualHoodCommand(shootingSubsystem, 0.08)); //manual hood down
+    operator.povUp().whileTrue(new ManualHoodCommand(shootingSubsystem, -0.08)); //manual hood up
 
-    operator.triangle().toggleOnTrue(new InterpolatingAutoAim(shootingSubsystem, swerveSubsystem, operator));
+    operator.triangle().toggleOnTrue(interpolatingAutoAim);
     
     operator.touchpad().toggleOnTrue(new HungryHippo(intakeSubsystem)); //intake goes up and down to try and free balls for shooting
   }

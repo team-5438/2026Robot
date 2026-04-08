@@ -20,6 +20,7 @@ public class InterpolatingAutoAim extends Command {
   double outputtedAngle;
   CommandPS5Controller operator;
   InterpolatingDoubleTreeMap map;
+  public boolean interAutoAimOn;
   /** Creates a new InterpolatingAutoAim. */
   public InterpolatingAutoAim(ShootingSubsystem shootingSubsystem, SwerveSubsystem swerveSubsystem, CommandPS5Controller operator) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -27,6 +28,7 @@ public class InterpolatingAutoAim extends Command {
     this.swerveSubsystem = swerveSubsystem;
     this.operator = operator;
     hoodPID = Constants.Shooting.hoodPID;
+    interAutoAimOn = true;
 
     map = new InterpolatingDoubleTreeMap();
     /*------- POWER = 0.9 ------ */
@@ -71,7 +73,9 @@ public class InterpolatingAutoAim extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    interAutoAimOn = false;
+  }
 
   // Returns true when the command should end.
   @Override

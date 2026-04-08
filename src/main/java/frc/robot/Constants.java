@@ -62,7 +62,6 @@ public final class Constants {
   }
 
   public static final class Intake {
-    /* -----TODO: Add actual IDs----- */
     public static final int intakeDeployLeftID = 14;
     public static final int intakeDeployRightID = 17;
     public static final int intakeSpinnyID = 6;
@@ -72,7 +71,7 @@ public final class Constants {
   }
 
   public static final class Shooting {
-    /* ----TODO: Add actual IDs----- */
+
     public static final int shootWheelsLeftID = 19;
     public static final int shootWheelsRightID = 18;
     public static final int feedWheelsID = 7;

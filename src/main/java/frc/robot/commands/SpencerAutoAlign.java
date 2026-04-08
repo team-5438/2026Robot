@@ -29,7 +29,7 @@ import swervelib.SwerveInputStream;
 import swervelib.math.SwerveMath;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class SpencerAutoAim extends Command {
+public class SpencerAutoAlign extends Command {
   SwerveSubsystem swerveSubsystem;
   PIDController anglePID;
   Pose2d robotPose2d;
@@ -37,17 +37,17 @@ public class SpencerAutoAim extends Command {
          diffX, diffY,
          desiredAngle, currentAngle, diffAngle,
          PIDOutput;
-  public boolean autoAimOn;
+  public boolean autoAlignOn;
   CommandXboxController driver;
   DoubleSupplier rightRotation;
-  ShootingSubsystem shootingSubsystem;
-  GenericEntry autoAimEntry;
+  // ShootingSubsystem shootingSubsystem;
+  GenericEntry autoAlignEntry;
   /** Creates a new SpencerAutoAim. */
-  public SpencerAutoAim(CommandXboxController driver, SwerveSubsystem swerveSubsystem, ShootingSubsystem shootingSubsystem, GenericEntry autoAimEntry) {
+  public SpencerAutoAlign(CommandXboxController driver, SwerveSubsystem swerveSubsystem, GenericEntry autoAlignEntry) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.swerveSubsystem = swerveSubsystem;
-    this.shootingSubsystem = shootingSubsystem;
-    this.autoAimEntry = autoAimEntry;
+    // this.shootingSubsystem = shootingSubsystem;
+    this.autoAlignEntry = autoAlignEntry;
 
     anglePID = Constants.anglePID;
     anglePID.enableContinuousInput(-Math.PI, Math.PI);
@@ -58,11 +58,11 @@ public class SpencerAutoAim extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    autoAimOn = true;
+    autoAlignOn = true;
     rightRotation = () -> MathUtil.applyDeadband(driver.getRightX(), Constants.Driver.rightStick.X);
-    shootingSubsystem.shootWheelsLeft.set(-0.1);
-    shootingSubsystem.shootWheelsRight.set(0.1);
-    autoAimEntry.setBoolean(autoAimOn);
+    // shootingSubsystem.shootWheelsLeft.set(-0.1);
+    // shootingSubsystem.shootWheelsRight.set(0.1);
+    autoAlignEntry.setBoolean(autoAlignOn);
 
   }
 
@@ -93,10 +93,10 @@ public class SpencerAutoAim extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    autoAimOn = false;
-    shootingSubsystem.shootWheelsLeft.set(0);
-    shootingSubsystem.shootWheelsRight.set(0);
-    autoAimEntry.setBoolean(autoAimOn);
+    autoAlignOn = false;
+    // shootingSubsystem.shootWheelsLeft.set(0);
+    // shootingSubsystem.shootWheelsRight.set(0);
+    autoAlignEntry.setBoolean(autoAlignOn);
   }
 
   // Returns true when the command should end.
