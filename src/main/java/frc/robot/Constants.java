@@ -79,7 +79,7 @@ public final class Constants {
     // public static final int hoodAngleEncoderID = 9;
     public static final int hoodAngleEncoderID_A = 4;
     public static final int hoodAngleEncoderID_B = 5;
-    public static final PIDController hoodPID = new PIDController(0.003, 0, 0);
+    public static final PIDController hoodPID = new PIDController(0.002, 0.002, 0.00001);
   }
 
   public static final class QuestNav {

@@ -35,7 +35,7 @@ public class SetIntakeCommand extends Command {
   @Override
   public void execute() {
     intakeSubsystem.intakeDeployLeft.set(intakePID.calculate(intakeSubsystem.deployEncoderDistance, angleMeasurement));
-    intakeSubsystem.intakeDeployRight.set(-intakePID.calculate(intakeSubsystem.deployEncoderDistance, angleMeasurement));
+    intakeSubsystem.intakeDeployRight.set(intakePID.calculate(intakeSubsystem.deployEncoderDistance, angleMeasurement));
   }
 
   // Called once the command ends or is interrupted.

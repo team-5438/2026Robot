@@ -34,12 +34,12 @@ public class HungryHippo extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(intakeSubsystem.deployEncoderDistance < 0.93){
+    if(intakeSubsystem.deployEncoderDistance < 0.18){
       intakeSubsystem.intakeDeployLeft.set(intakePID.calculate(intakeSubsystem.deployEncoderDistance, 0.275));
-      intakeSubsystem.intakeDeployRight.set(-intakePID.calculate(intakeSubsystem.deployEncoderDistance, 0.275));
+      intakeSubsystem.intakeDeployRight.set(intakePID.calculate(intakeSubsystem.deployEncoderDistance, 0.275));
     } else {
-      intakeSubsystem.intakeDeployLeft.set(intakePID.calculate(intakeSubsystem.deployEncoderDistance, 0.77));
-      intakeSubsystem.intakeDeployRight.set(-intakePID.calculate(intakeSubsystem.deployEncoderDistance, 0.77));
+      intakeSubsystem.intakeDeployLeft.set(intakePID.calculate(intakeSubsystem.deployEncoderDistance, 0.105));
+      intakeSubsystem.intakeDeployRight.set(intakePID.calculate(intakeSubsystem.deployEncoderDistance, 0.105));
     }
   }
 

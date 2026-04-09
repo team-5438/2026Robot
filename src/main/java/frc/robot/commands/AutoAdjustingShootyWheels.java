@@ -44,13 +44,16 @@ public class AutoAdjustingShootyWheels extends Command {
       if(distanceFromHub >= 3.1){
         shootingSubsystem.shootWheelsRight.set(1);
         shootingSubsystem.shootWheelsLeft.set(-1);
+        System.out.println("speed: 1");
       } else {
-        shootingSubsystem.shootWheelsRight.set(0.9);
-        shootingSubsystem.shootWheelsLeft.set(-0.9);
+        shootingSubsystem.shootWheelsRight.set(0.925);
+        shootingSubsystem.shootWheelsLeft.set(-0.925);
+        System.out.println("speed: 0.925");
       }
     } else {
       shootingSubsystem.shootWheelsRight.set(defaultSpeed);
       shootingSubsystem.shootWheelsLeft.set(-defaultSpeed);
+      System.out.println("speed: default");
     }
   }
 

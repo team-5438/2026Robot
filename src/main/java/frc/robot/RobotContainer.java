@@ -13,6 +13,7 @@ import frc.robot.commands.IntakeWheelsCommand;
 import frc.robot.commands.InterpolatingAutoAim;
 import frc.robot.commands.ManualHoodCommand;
 import frc.robot.commands.ManualIntakeCommand;
+import frc.robot.commands.MusicCommand;
 import frc.robot.commands.ShootingWheelsCommand;
 import frc.robot.commands.SpencerAutoAlign;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -34,6 +35,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -73,6 +75,8 @@ public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
   public final SendableChooser<Chooser> initialChooser;
+  public final SendableChooser<String> musicChooser;
+  public MusicCommand musicCommand;
 
   
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(swerveSubsystem.getSwerveDrive(),
@@ -97,16 +101,18 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    musicChooser = setUpMusicChooser();
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     
     //Create the NamedCommands that will be used in PathPlanner
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
-    NamedCommands.registerCommand("spin up", new ShootingWheelsCommand(shootingSubsystem, spencerAutoAlign, 0.95));
+    NamedCommands.registerCommand("spin up", new AutoAdjustingShootyWheels(shootingSubsystem, swerveSubsystem, interpolatingAutoAim, 0.925));
     NamedCommands.registerCommand("shoot", new FeedCommand(shootingSubsystem, 1));
-    NamedCommands.registerCommand("auto aim", new HoodAutoAim(shootingSubsystem, swerveSubsystem, operator));
+    NamedCommands.registerCommand("auto aim", new InterpolatingAutoAim(shootingSubsystem, swerveSubsystem, operator));
     NamedCommands.registerCommand("intake", new IntakeWheelsCommand(intakeSubsystem, 1));
-    NamedCommands.registerCommand("deploy intake", new SetIntakeCommand(intakeSubsystem, 0.74));
+    NamedCommands.registerCommand("deploy intake", new SetIntakeCommand(intakeSubsystem, 0.075));
+    NamedCommands.registerCommand("withdraw intake", new SetIntakeCommand(intakeSubsystem, 0.305));
 
     //Have the autoChooser pull in all PathPlanner autos as options
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -123,6 +129,8 @@ public class RobotContainer {
     initialChooser = setUpInitialChooser();
     vision = new Vision(swerveSubsystem::getPose, swerveSubsystem.swerveDrive.field);
     questNavSubsystem = new QuestNavSubsystem(swerveSubsystem, vision, initialChooser);
+
+
   }
 
   /**
@@ -151,6 +159,9 @@ public class RobotContainer {
     GenericEntry autoAimEntry = autoAlignShuffleboardTab.add("Auto Aim On", false).getEntry();
     interpolatingAutoAim = new InterpolatingAutoAim(shootingSubsystem, swerveSubsystem, operator);
 
+    musicCommand = new MusicCommand(intakeSubsystem, shootingSubsystem, swerveSubsystem, getSelectedMusic());
+
+
     /* ----------DRIVER CONTROLS----------- */
 
     driver.x().toggleOnTrue(spencerAutoAlign);
@@ -162,7 +173,9 @@ public class RobotContainer {
     driver.y().onTrue(new InstantCommand(swerveSubsystem::zeroGyro));
     driver.b().onTrue(new InstantCommand(shootingSubsystem::resetHoodEncoder));
 
-    
+    driver.back().toggleOnTrue(musicCommand);
+
+
     /* -------OPERATOR CONTROLS--------- */
     operator.R1().whileTrue(new FeedCommand(shootingSubsystem, 1)); // Feed
     operator.options().whileTrue(new ParallelCommandGroup(new FeedCommand(shootingSubsystem, -0.5), new ShootingWheelsCommand(shootingSubsystem, spencerAutoAlign, -0.5))); // Reverse Feed (hopefully never used)
@@ -234,5 +247,19 @@ public class RobotContainer {
     chooser.setDefaultOption("cameras", Chooser.CAMERAS);
     SmartDashboard.putData("Initial Position Chooser", chooser);
     return chooser;
+  }
+
+  public SendableChooser<String> setUpMusicChooser(){
+    SendableChooser<String> musicChooser = new SendableChooser<>();
+    musicChooser.addOption("clear sky", "chrp_files/clear_sky.chrp");
+    musicChooser.addOption("bad piggies", "chrp_files/badpiggies.chrp");
+    musicChooser.addOption("we r the champions", "chrp_files/champions.chrp");
+    musicChooser.addOption("stal", "chrp_files/stal.chrp");
+    SmartDashboard.putData("Music Chooser", musicChooser);
+    return musicChooser;
+  }
+
+  public String getSelectedMusic(){
+    return musicChooser.getSelected();
   }
 }

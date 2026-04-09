@@ -84,9 +84,6 @@ public class SpencerAutoAlign extends Command {
     swerveSubsystem.driveFieldOriented(getTargetSpeeds(driver.getLeftY() * speedMod,
                           driver.getLeftX()  * speedMod,
                           Rotation2d.fromDegrees(desiredAngle)));
-    System.out.println("P: " + swerveSubsystem.swerveDrive.swerveController.thetaController.getP());
-    System.out.println("I: " + swerveSubsystem.swerveDrive.swerveController.thetaController.getI());
-    System.out.println("D: " + swerveSubsystem.swerveDrive.swerveController.thetaController.getD());
 
   }
 

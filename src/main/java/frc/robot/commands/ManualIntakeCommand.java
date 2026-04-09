@@ -24,7 +24,7 @@ public class ManualIntakeCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intakeSubsystem.intakeDeployLeft.set(speed);
+    intakeSubsystem.intakeDeployLeft.set(-speed);
     intakeSubsystem.intakeDeployRight.set(-speed);
   }
 

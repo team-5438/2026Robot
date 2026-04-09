@@ -28,7 +28,7 @@ public class InterpolatingAutoAim extends Command {
     this.swerveSubsystem = swerveSubsystem;
     this.operator = operator;
     hoodPID = Constants.Shooting.hoodPID;
-    interAutoAimOn = true;
+    interAutoAimOn = false;
 
     map = new InterpolatingDoubleTreeMap();
     /*------- POWER = 0.9 ------ */
@@ -52,23 +52,29 @@ public class InterpolatingAutoAim extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    interAutoAimOn = true;
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
 
+    double currentAngle = shootingSubsystem.hoodAngleEncoderValue;
     double distanceX = swerveSubsystem.getPose().getX() - Constants.HUB_X;
     double distanceY =swerveSubsystem.getPose().getY() - Constants.HUB_Y;
     double distanceFromHub = Math.sqrt((Math.pow(distanceX, 2) + Math.pow(distanceY, 2))); //Pythagorean Theorem
 
     outputtedAngle = map.get(distanceFromHub);
-    if(outputtedAngle > shootingSubsystem.hoodAngleEncoderValue){
+   /* if(outputtedAngle > shootingSubsystem.hoodAngleEncoderValue){
       shootingSubsystem.hoodAngleMotor.set(-Math.abs(hoodPID.calculate(shootingSubsystem.hoodAngleEncoderValue, outputtedAngle)));
-    } else {
+    } else if(outputtedAngle < shootingSubsystem.hoodAngleEncoderValue) {
       shootingSubsystem.hoodAngleMotor.set(Math.abs(hoodPID.calculate(shootingSubsystem.hoodAngleEncoderValue, outputtedAngle)));
+    } */
+    if(currentAngle >= outputtedAngle + 0.05 || currentAngle <= outputtedAngle - 0.05){
+      shootingSubsystem.hoodAngleMotor.set(-hoodPID.calculate(currentAngle, outputtedAngle));
     }
-    System.out.println("distance: " + distanceFromHub + "      output: " + outputtedAngle + "     current: " + shootingSubsystem.hoodAngleEncoderValue);
+    System.out.println("distance: " + distanceFromHub + "      output: " + outputtedAngle + "     current: " + currentAngle);
   }
 
   // Called once the command ends or is interrupted.
