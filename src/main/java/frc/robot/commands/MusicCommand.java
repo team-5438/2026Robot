@@ -51,7 +51,7 @@ public class MusicCommand extends Command {
     orchestra.addInstrument((TalonFX)swerveSubsystem.getSwerveDriveConfiguration().modules[2].getDriveMotor().getMotor(), 6);
     orchestra.addInstrument((TalonFX)swerveSubsystem.getSwerveDriveConfiguration().modules[3].getDriveMotor().getMotor(), 7);
     var status = orchestra.loadMusic(songName);
-    orchestra.play();
+    if(status.isOK()) orchestra.play();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

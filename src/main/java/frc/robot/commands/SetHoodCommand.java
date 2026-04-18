@@ -4,48 +4,45 @@
 
 package frc.robot.commands;
 
-import java.lang.invoke.ConstantBootstraps;
-
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import frc.robot.Constants;
-import frc.robot.Constants.Shooting;
 import frc.robot.subsystems.ShootingSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ManualHoodCommand extends Command {
-  /** Creates a new ManualHoodCommand. */
+public class SetHoodCommand extends Command {
+  /** Creates a new SetHoodCommand. */
   ShootingSubsystem shootingSubsystem;
-  double speed;
-  public ManualHoodCommand(ShootingSubsystem shootingSubsystem, double speed) {
-    // Use addRequirements() here to declare subsystem dependencies.
+  PIDController hoodPID;
+  CommandPS5Controller operator;
+  public SetHoodCommand(ShootingSubsystem shootingSubsystem, CommandPS5Controller operator) {
     this.shootingSubsystem = shootingSubsystem;
-    this.speed = speed;
+    hoodPID = Constants.Shooting.hoodPID;
+    this.operator = operator;
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    shootingSubsystem.hoodAngleMotor.set(speed);
-  }
+  public void initialize() {}
 
-  // Called every time the scheduler runs w hile the command is scheduled.
+  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // if(shootingSubsystem.hoodAngleEncoderValue <= 0.47 && speed < 0){
-    //   shootingSubsystem.hoodAngleMotor.set(0);
-    // }
-    double FFOutput = Constants.Shooting.hoodFF.calculate(shootingSubsystem.hoodAngleEncoderValue, speed);
+    shootingSubsystem.hoodAngleMotor.set(-hoodPID.calculate(shootingSubsystem.hoodAngleEncoderValue, 190));
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    shootingSubsystem.hoodAngleMotor.set(0);
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if(operator.povUp().getAsBoolean() || operator.povDown().getAsBoolean() || operator.triangle().getAsBoolean()){
+      return true;
+    }
     return false;
   }
 }

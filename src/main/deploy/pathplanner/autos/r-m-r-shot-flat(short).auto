@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "r-m"
+            "pathName": "r-m-flat-SHORT"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "m-r-shot v2"
+            "pathName": "m-r-shot-SHORT"
           }
         },
         {
@@ -21,7 +21,7 @@
           "data": {
             "commands": [
               {
-                "type": "parallel",
+                "type": "race",
                 "data": {
                   "commands": [
                     {

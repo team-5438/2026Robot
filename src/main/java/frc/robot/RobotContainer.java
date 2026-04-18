@@ -7,13 +7,13 @@ package frc.robot;
 import frc.robot.commands.SetIntakeCommand;
 import frc.robot.commands.AutoAdjustingShootyWheels;
 import frc.robot.commands.FeedCommand;
-import frc.robot.commands.HoodAutoAim;
 import frc.robot.commands.HungryHippo;
 import frc.robot.commands.IntakeWheelsCommand;
 import frc.robot.commands.InterpolatingAutoAim;
 import frc.robot.commands.ManualHoodCommand;
 import frc.robot.commands.ManualIntakeCommand;
 import frc.robot.commands.MusicCommand;
+import frc.robot.commands.SetHoodCommand;
 import frc.robot.commands.ShootingWheelsCommand;
 import frc.robot.commands.SpencerAutoAlign;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -113,6 +113,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("intake", new IntakeWheelsCommand(intakeSubsystem, 1));
     NamedCommands.registerCommand("deploy intake", new SetIntakeCommand(intakeSubsystem, 0.075));
     NamedCommands.registerCommand("withdraw intake", new SetIntakeCommand(intakeSubsystem, 0.305));
+    NamedCommands.registerCommand("hungry hippo", new HungryHippo(intakeSubsystem));
 
     //Have the autoChooser pull in all PathPlanner autos as options
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -129,7 +130,6 @@ public class RobotContainer {
     initialChooser = setUpInitialChooser();
     vision = new Vision(swerveSubsystem::getPose, swerveSubsystem.swerveDrive.field);
     questNavSubsystem = new QuestNavSubsystem(swerveSubsystem, vision, initialChooser);
-
 
   }
 
@@ -173,33 +173,40 @@ public class RobotContainer {
     driver.y().onTrue(new InstantCommand(swerveSubsystem::zeroGyro));
     driver.b().onTrue(new InstantCommand(shootingSubsystem::resetHoodEncoder));
 
-    driver.back().toggleOnTrue(musicCommand);
+    // driver.back().toggleOnTrue(musicCommand);
+
+    driver.a().toggleOnTrue(interpolatingAutoAim);
 
 
     /* -------OPERATOR CONTROLS--------- */
     operator.R1().whileTrue(new FeedCommand(shootingSubsystem, 1)); // Feed
     operator.options().whileTrue(new ParallelCommandGroup(new FeedCommand(shootingSubsystem, -0.5), new ShootingWheelsCommand(shootingSubsystem, spencerAutoAlign, -0.5))); // Reverse Feed (hopefully never used)
     
-    operator.R2().whileTrue(new AutoAdjustingShootyWheels(shootingSubsystem, swerveSubsystem, interpolatingAutoAim, 0.925)); // Spin up to shoot balls
-    // operator.R3().whileTrue(new ShootingWheelsCommand(shootingSubsystem, spencerAutoAim, 0.9)); // Spin up to shoot balls
+    operator.R2().whileTrue(new AutoAdjustingShootyWheels(shootingSubsystem, swerveSubsystem, interpolatingAutoAim, 0.91)); // Spin up to shoot balls
+    // operator.R3().whileTrue(new ShootingWheelsCommand(shootingSubsystem, spencerAutoAlign, 0.05)); // Spin up to shoot balls
     // driver.leftTrigger().whileTrue(new ShootingWheelsCommand(shootingSubsystem, spencerAutoAim, 1)); // Spin up to shoot balls
     // driver.leftBumper().whileTrue(new ShootingWheelsCommand(shootingSubsystem, spencerAutoAim, 0.95)); // Spin up to shoot balls
+    // operator.L3().whileTrue(new IntakeWheelsCommand(intakeSubsystem, 0.1));
 
     operator.L2().whileTrue(new IntakeWheelsCommand(intakeSubsystem, 1)); // Intake balls
     operator.L1().whileTrue(new IntakeWheelsCommand(intakeSubsystem, -0.5)); // Outtake (hopefully never used)
     
-    operator.cross().onTrue(new SetIntakeCommand(intakeSubsystem, 0.075)); //(deploy intake)
+    operator.cross().onTrue(new SetIntakeCommand(intakeSubsystem, 0.055)); //(deploy intake)
     operator.square().onTrue(new SetIntakeCommand(intakeSubsystem, 0.305)); //(withdraw intake)
 
     operator.povRight().whileTrue(new ManualIntakeCommand(intakeSubsystem, 0.15)); //manual intake out
-    operator.povLeft().whileTrue(new ManualIntakeCommand(intakeSubsystem, -0.05)); //manual intake in
+    operator.povLeft().whileTrue(new ManualIntakeCommand(intakeSubsystem, -0.1)); //manual intake in
 
     operator.povDown().whileTrue(new ManualHoodCommand(shootingSubsystem, 0.08)); //manual hood down
     operator.povUp().whileTrue(new ManualHoodCommand(shootingSubsystem, -0.08)); //manual hood up
 
-    operator.triangle().toggleOnTrue(interpolatingAutoAim);
+    operator.circle().toggleOnTrue(new SetHoodCommand(shootingSubsystem, operator)); //set hood to a positoin for shooting back from neutral zone
+
+    // operator.triangle().toggleOnTrue(interpolatingAutoAim); //toggle Auto Aim on/off
     
     operator.touchpad().toggleOnTrue(new HungryHippo(intakeSubsystem)); //intake goes up and down to try and free balls for shooting
+
+    
   }
 
   /**
@@ -215,8 +222,16 @@ public class RobotContainer {
   public enum Chooser {
     REDLEFT(new Pose2d(12.929, 0.419, new Rotation2d(Math.PI))),
     REDRIGHT(new Pose2d(12.929, 7.641,new Rotation2d(Math.PI))),
+    
     BLUELEFT(new Pose2d(3.661, 7.641, new Rotation2d(0))),
     BLUERIGHT(new Pose2d(3.661, 0.419, new Rotation2d(0))),
+    
+    BLUELEFTNEW(new Pose2d(4.460, 7.641, new Rotation2d(-Math.PI/2))),
+    BLUERIGHTNEW(new Pose2d(4.460, 0.419, new Rotation2d(Math.PI/2))),
+    
+    REDLEFTNEW(new Pose2d(12.13, 0.419, new Rotation2d(Math.PI/2))),
+    REDRIGHTNEW(new Pose2d(12.13, 7.641, new Rotation2d(-Math.PI/2))),
+
     CAMERAS(null);
 
     private Pose2d initialPose;
@@ -231,7 +246,7 @@ public class RobotContainer {
         try{
           return vision.getEstimatedGlobalPose(Vision.Cameras.FrontLeft).get().estimatedPose.toPose2d();
         } catch(Exception E){
-          return Constants.isRedAlliance ? new Pose2d(12.97, 4.03, new Rotation2d(Math.PI)) : new Pose2d(4.08, 4.03, new Rotation2d(0));
+          return Robot.isRedAlliance ? new Pose2d(12.97, 4.03, new Rotation2d(Math.PI)) : new Pose2d(4.08, 4.03, new Rotation2d(0));
         }
       }
       return initialPose;
@@ -243,6 +258,10 @@ public class RobotContainer {
     chooser.addOption("redRight", Chooser.REDRIGHT);
     chooser.addOption("blueLeft", Chooser.BLUELEFT);
     chooser.addOption("blueRight", Chooser.BLUERIGHT);
+    chooser.addOption("redLeft NEW", Chooser.REDLEFTNEW);
+    chooser.addOption("redRight NEW", Chooser.REDRIGHTNEW);
+    chooser.addOption("blueLeft NEW", Chooser.BLUELEFTNEW);
+    chooser.addOption("blueRight NEW", Chooser.BLUERIGHTNEW);
     chooser.addOption("cameras", Chooser.CAMERAS);
     chooser.setDefaultOption("cameras", Chooser.CAMERAS);
     SmartDashboard.putData("Initial Position Chooser", chooser);

@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "r-m"
+            "pathName": "r-m-flat"
           }
         },
         {
@@ -21,7 +21,7 @@
           "data": {
             "commands": [
               {
-                "type": "parallel",
+                "type": "race",
                 "data": {
                   "commands": [
                     {

@@ -37,7 +37,7 @@ public class AutoAdjustingShootyWheels extends Command {
   @Override
   public void execute() {
     if(interpolatingAutoAim.interAutoAimOn){
-      double distanceX = swerveSubsystem.getPose().getX() - Constants.HUB_X;
+      double distanceX = swerveSubsystem.getPose().getX() - Robot.correct_HUB_X;
       double distanceY =swerveSubsystem.getPose().getY() - Constants.HUB_Y;
       double distanceFromHub = Math.sqrt((Math.pow(distanceX, 2) + Math.pow(distanceY, 2))); //Pythagorean Theorem
   
@@ -46,14 +46,14 @@ public class AutoAdjustingShootyWheels extends Command {
         shootingSubsystem.shootWheelsLeft.set(-1);
         System.out.println("speed: 1");
       } else {
-        shootingSubsystem.shootWheelsRight.set(0.925);
-        shootingSubsystem.shootWheelsLeft.set(-0.925);
-        System.out.println("speed: 0.925");
+        shootingSubsystem.shootWheelsRight.set(0.92);
+        shootingSubsystem.shootWheelsLeft.set(-0.92);
+        System.out.println("speed: 0.92");
       }
     } else {
       shootingSubsystem.shootWheelsRight.set(defaultSpeed);
       shootingSubsystem.shootWheelsLeft.set(-defaultSpeed);
-      System.out.println("speed: default");
+      // System.out.println("speed: default");
     }
   }
 

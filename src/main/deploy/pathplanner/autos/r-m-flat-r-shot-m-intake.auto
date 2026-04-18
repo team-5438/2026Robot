@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "r-m"
+            "pathName": "r-m-flat"
           }
         },
         {
@@ -17,11 +17,11 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
-                "type": "parallel",
+                "type": "race",
                 "data": {
                   "commands": [
                     {
@@ -70,8 +70,20 @@
                     }
                   ]
                 }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 8.0
+                }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "r-mid-after-shot"
           }
         }
       ]

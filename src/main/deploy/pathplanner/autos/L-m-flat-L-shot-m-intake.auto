@@ -7,21 +7,21 @@
         {
           "type": "path",
           "data": {
-            "pathName": "r-m"
+            "pathName": "L-m-flat"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "m-r-shot v2"
+            "pathName": "m-L-shot v2"
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
-                "type": "parallel",
+                "type": "race",
                 "data": {
                   "commands": [
                     {
@@ -70,8 +70,20 @@
                     }
                   ]
                 }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 8.0
+                }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L-mid-after-shot"
           }
         }
       ]

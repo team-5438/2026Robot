@@ -4,13 +4,17 @@
 
 package frc.robot;
 
+import java.util.Optional;
+
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.utils.GetAlliance;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -21,6 +25,9 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   public final RobotContainer m_robotContainer;
+  public static boolean isRedAlliance;
+  boolean alreadySet = false;
+  public static double correct_HUB_X;
  
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -56,7 +63,13 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    if(!alreadySet && DriverStation.getAlliance() != null && DriverStation.getAlliance().isPresent()){
+      isRedAlliance = GetAlliance.isRed();
+      correct_HUB_X = isRedAlliance ? Constants.HUB_X_RED : Constants.HUB_X_BLUE;
+      alreadySet = true;
+    }
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override

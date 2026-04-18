@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "r-m"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "m-r-shot v2"
+            "pathName": "center-shot"
           }
         },
         {

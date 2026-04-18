@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.Inches;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -29,14 +30,14 @@ import frc.robot.utils.StickDeadband;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static boolean isRedAlliance = GetAlliance.isRed();
 
   public static class VisionConstants
   {
     public static final boolean DRIVEWITHVISION = true;
   }
-  public static final PIDController anglePID = new PIDController(0.5, 0, 0.005);
-  public static final double HUB_X = isRedAlliance ? 11.91539 : 4.6253; //x of hub in meters
+  public static final PIDController anglePID = new PIDController(0.4, 0, 0.005);
+  public static final double HUB_X_RED = 11.91539; //x of hub in meters (red)
+  public static final double HUB_X_BLUE = 4.6253; //x of hub in meters (blue)
   public static final double HUB_Y = 4.034536; //y of hub in meters
 
   public static final Controller Operator = new Controller( 
@@ -66,7 +67,7 @@ public final class Constants {
     public static final int intakeDeployRightID = 17;
     public static final int intakeSpinnyID = 6;
     public static final int deployEncoderID = 0;
-    public static final PIDController intakeDeployPID = new PIDController(1.3, 0, 0); //UNTESTED
+    public static final PIDController intakeDeployPID = new PIDController(1.4, 0, 0); //UNTESTED
 
   }
 
@@ -79,7 +80,10 @@ public final class Constants {
     // public static final int hoodAngleEncoderID = 9;
     public static final int hoodAngleEncoderID_A = 4;
     public static final int hoodAngleEncoderID_B = 5;
-    public static final PIDController hoodPID = new PIDController(0.002, 0.002, 0.00001);
+    // public static final PIDController hoodPID = new PIDController(0.0017, 0.002, 0.00006);
+    // public static final PIDController hoodPID = new PIDController(0.0008, 0.000045, 0.000045);
+    public static final PIDController hoodPID = new PIDController(0.00018, 0.00003, 0.00003);
+    public static final ArmFeedforward hoodFF = new ArmFeedforward(0, 0.1, 0);
   }
 
   public static final class QuestNav {

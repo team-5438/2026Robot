@@ -23,8 +23,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.subsystems.ShootingSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.utils.GetAlliance;
 import swervelib.SwerveInputStream;
 import swervelib.math.SwerveMath;
 
@@ -34,6 +36,7 @@ public class SpencerAutoAlign extends Command {
   PIDController anglePID;
   Pose2d robotPose2d;
   double robotX, robotY, 
+         hub_X,
          diffX, diffY,
          desiredAngle, currentAngle, diffAngle,
          PIDOutput;
@@ -63,7 +66,7 @@ public class SpencerAutoAlign extends Command {
     // shootingSubsystem.shootWheelsLeft.set(-0.1);
     // shootingSubsystem.shootWheelsRight.set(0.1);
     autoAlignEntry.setBoolean(autoAlignOn);
-
+    hub_X = GetAlliance.isRed() ? Constants.HUB_X_RED : Constants.HUB_X_BLUE;
   }
 
   
@@ -75,14 +78,15 @@ public class SpencerAutoAlign extends Command {
     robotPose2d = swerveSubsystem.getPose();
     robotX = robotPose2d.getMeasureX().in(Meters);
     robotY = robotPose2d.getMeasureY().in(Meters);
-    diffX = Constants.HUB_X - robotX;
+    diffX = hub_X - robotX;
     diffY = Constants.HUB_Y - robotY;
     desiredAngle = (diffX == 0) ? 0 : Math.toDegrees(Math.atan2(diffY, diffX));
     currentAngle = robotPose2d.getRotation().getDegrees();
     diffAngle = currentAngle - desiredAngle;
+    System.out.println("  HUB-X" + hub_X + "    currentAngle: " + currentAngle + "    diffAngle: " + diffAngle);
 
-    swerveSubsystem.driveFieldOriented(getTargetSpeeds(driver.getLeftY() * speedMod,
-                          driver.getLeftX()  * speedMod,
+    swerveSubsystem.driveFieldOriented(getTargetSpeeds(-driver.getLeftY() * speedMod,
+                          -driver.getLeftX()  * speedMod,
                           Rotation2d.fromDegrees(desiredAngle)));
 
   }
